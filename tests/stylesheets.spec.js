@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-import Stylesheet from '../stylesheet'
+import Stylesheet from '../src/stylesheet'
 
 describe('Stylesheet', function () {
   let s

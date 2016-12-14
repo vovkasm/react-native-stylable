@@ -1,7 +1,7 @@
 
 import Benchmark from 'benchmark'
 
-import Stylesheet from '../stylesheet'
+import Stylesheet from '../src/stylesheet'
 
 const s = new Stylesheet()
 s.addRules({
