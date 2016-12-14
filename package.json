@@ -39,6 +39,12 @@
     "eslint-plugin-standard": "^2.0.1",
     "microtime": "^2.1.2",
     "mocha": "^3.2.0",
-    "mocha-eslint": "^3.0.1"
+    "mocha-eslint": "^3.0.1",
+    "react": "^15.4.1",
+    "react-native": "^0.39.2",
+    "react-native-mock": "^0.2.9"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^1.2.0"
   }
 }
