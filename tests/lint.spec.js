@@ -1,3 +1,3 @@
 import lint from 'mocha-eslint'
 
-lint([ 'src/*.js' ])
+lint([ 'src/*.js', 'tests/*.js' ])
