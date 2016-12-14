@@ -12,7 +12,15 @@
     "styles",
     "themes"
   ],
-  "author": "Vladimir Timofeev",
+  "author": "Vladimir Timofeev <vovkasm@gmail.com>",
+  "homepage": "https://github.com/vovkasm/react-native-stylable",
+  "bugs": {
+    "url": "https://github.com/vovkasm/react-native-stylable/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vovkasm/react-native-stylable.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "babel-eslint": "^7.0.0",
