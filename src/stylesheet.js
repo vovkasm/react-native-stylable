@@ -14,7 +14,7 @@ class Selector {
   matchContext (name, context) {
     if (this.name !== name) return false
     if (this.order === 1) return true // simple rule
-    if (Array.isArray(context)) {
+    if (context !== undefined) {
       let j = this.order - 1
       let i = context.length - 1
       const chains = this.chains
