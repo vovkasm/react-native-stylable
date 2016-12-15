@@ -5,16 +5,12 @@ import Stylesheet from '../src/stylesheet'
 
 const s = new Stylesheet()
 s.addRules({
-  baseText: {
-    style: {
-      fontSize: 12
-    }
-  },
-  baseText2: {
-    style: {
-      fontSize: 11
-    }
-  },
+  stdFont: {style: {fontFamily: 'Helvetica'}},
+  pdLeft: {style: {paddingLeft: 2}},
+  pdRight: {style: {paddingRight: 2}},
+  pdHorizontal: {mixins: ['pdLeft', 'pdRight']},
+  baseText: {mixins: ['stdFont', 'pdHorizontal'], style: {fontSize: 12}},
+  baseText2: {mixins: ['stdFont'], style: {fontSize: 11}},
   Button: {
     props: {
       color: '#bf7650'
