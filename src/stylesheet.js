@@ -1,11 +1,49 @@
 
+class Selector {
+  constructor (value) {
+    const chains = value.split(/\s+/)
+    const chainsCount = chains.length
+    this.value = value
+    this.chains = chains
+    this.name = chains[chainsCount - 1]
+    this.order = chainsCount
+  }
+  getName () { return this.name }
+  getOrder () { return this.order }
+  getValue () { return this.value }
+  matchContext (name, context) {
+    if (this.name !== name) return false
+    if (this.order === 1) return true // simple rule
+    if (Array.isArray(context)) {
+      let j = this.order - 1
+      let i = context.length - 1
+      const chains = this.chains
+      while (i >= 0 && j > 0) {
+        if (chains[j - 1] === context[i]) --j
+        --i
+      }
+      if (j === 0) return true
+    }
+    return false
+  }
+}
+
+class SimpleSelector {
+  constructor (value) {
+    this.value = value
+  }
+  getName () { return this.value }
+  getOrder () { return 1 }
+  getValue () { return this.value }
+  matchContext (name, context) {
+    return name === this.value
+  }
+}
+
 class Rule {
   constructor (selector, props, rank) {
     this.selector = selector
-    this.chains = selector.split(/\s+/)
-    this.name = this.chains[this.chains.length - 1]
     this.rank = rank
-    this.order = this.chains.length
     this.props = props.props
     this.style = props.style
     this.mixins = props.mixins
@@ -13,23 +51,11 @@ class Rule {
     this.resolvedStyle = undefined
     this.resolveGen = 0
   }
-  matchContext (name, context) {
-    if (this.name !== name) return false
-    if (this.chains.length === 1) return true // simple rule
-    if (Array.isArray(context)) {
-      let j = this.chains.length - 1
-      let i = context.length - 1
-      while (i >= 0 && j > 0) {
-        if (this.chains[j - 1] === context[i]) --j
-        --i
-      }
-      if (j === 0) return true
-    }
-    return false
-  }
-  key () {
-    return this.name
-  }
+  getKey () { return this.selector.getName() }
+  getSelector () { return this.selector.getValue() }
+  getRank () { return this.rank }
+  getOrder () { return this.selector.getOrder() }
+  matchContext (name, context) { return this.selector.matchContext(name, context) }
   resolve (s) {
     if (this.resolveGen !== s.ngen) {
       this.doResolution(s)
@@ -78,8 +104,8 @@ class Rule {
 }
 
 function ruleComparator (r1, r2) {
-  const cmp = r2.rank - r1.rank
-  if (cmp === 0) return r2.order - r1.order
+  const cmp = r2.getRank() - r1.getRank()
+  if (cmp === 0) return r2.getOrder() - r1.getOrder()
   return cmp
 }
 
@@ -142,14 +168,20 @@ class Stylesheet {
     this._addRule(selector, props, 1)
     this._resetCache()
   }
-  _addRule (selector, props, rank) {
+  _addRule (selectorValue, props, rank) {
+    let selector
+    if (selectorValue.indexOf(' ') === -1) {
+      selector = new SimpleSelector(selectorValue)
+    } else {
+      selector = new Selector(selectorValue)
+    }
     const rule = new Rule(selector, props, rank)
-    const key = rule.key()
+    const key = rule.getKey()
     if (this.rules[key] === undefined) {
       this.rules[key] = [rule]
     } else {
       const rules = this.rules[key]
-      const i = rules.findIndex(el => rule.selector === el.selector && rule.rank === el.rank)
+      const i = rules.findIndex(el => rule.getSelector() === el.getSelector() && rule.getRank() === el.getRank())
       if (i >= 0) {
         rules[i] = rule
       } else {
