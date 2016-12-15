@@ -127,5 +127,14 @@ describe('Stylesheet', function () {
         style: { fontSize: 8, horizontalMargin: 2 }
       })
     })
+    it('mixins in mixins', function () {
+      s.addRules({
+        'bold': {mixins: ['defaultFont'], style: {fontWeight: 'bold'}},
+        'Text2': {mixins: ['bold']}
+      })
+      expect(s.getProps('App Text2')).to.be.deep.equal({
+        style: { fontSize: 10, fontFamily: 'Helvetica', fontWeight: 'bold' }
+      })
+    })
   })
 })
