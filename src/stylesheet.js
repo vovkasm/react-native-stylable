@@ -146,7 +146,6 @@ class Stylesheet {
   constructor () {
     this.rules = {}
     this.ngen = 0
-    this.cache = {}
   }
   addDefaultRules (rules) {
     for (let selector in rules) {
@@ -191,14 +190,7 @@ class Stylesheet {
     this.rules[key].sort(ruleComparator)
   }
   getProps (context, ownProps) {
-    let data
-    if (this.cache.hasOwnProperty(context)) {
-      data = this.cache[context]
-    } else {
-      data = this._resolve(context)
-      this.cache[context] = data
-    }
-
+    const data = this._resolve(context)
     return mergeToProps(ownProps, data.props, data.style)
   }
   getRules (name) {
@@ -238,7 +230,6 @@ class Stylesheet {
   }
   _resetCache () {
     this.ngen++
-    this.cache = {}
   }
 }
 
