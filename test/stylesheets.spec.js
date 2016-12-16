@@ -89,14 +89,21 @@ describe('Stylesheet', function () {
         }
       })
     })
-    it('get correct style with ownStyle', function () {
-      expect(s.getProps('App Other Text', {style: {color: 'green'}})).to.be.deep.equal({
-        style: [{
-          fontSize: 10,
-          color: 'black'
-        }, {
-          color: 'green'
-        }]
+    describe('with ownStyle', function () {
+      it('Object', function () {
+        expect(s.getProps('App Other Text', {style: {color: 'green'}})).to.be.deep.equal({
+          style: [{ fontSize: 10, color: 'black' }, { color: 'green' }]
+        })
+      })
+      it('Number', function () {
+        expect(s.getProps('App Other Text', {style: 2})).to.be.deep.equal({
+          style: [{ fontSize: 10, color: 'black' }, 2]
+        })
+      })
+      it('Array', function () {
+        expect(s.getProps('App Other Text', {style: [2]})).to.be.deep.equal({
+          style: [{ fontSize: 10, color: 'black' }, 2]
+        })
       })
     })
   })
