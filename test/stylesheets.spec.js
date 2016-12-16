@@ -91,10 +91,12 @@ describe('Stylesheet', function () {
     })
     it('get correct style with ownStyle', function () {
       expect(s.getProps('App Other Text', {style: {color: 'green'}})).to.be.deep.equal({
-        style: {
+        style: [{
           fontSize: 10,
+          color: 'black'
+        }, {
           color: 'green'
-        }
+        }]
       })
     })
   })

@@ -139,14 +139,27 @@ class Stylesheet {
     const ctx = parseContext(context)
     const rules = []
     this.collectRules(rules, ctx)
+    const style = {}
+    let isStyle = false
     for (let i in rules) {
       const rule = rules[i]
       if (rule.props !== undefined) {
         mergeTo(props, rule.props)
       }
       if (rule.style !== undefined) {
-        if (props.style === undefined) props.style = {}
-        mergeTo(props.style, rule.style)
+        mergeTo(style, rule.style)
+        isStyle = true
+      }
+    }
+    if (isStyle) {
+      if (props.style === undefined) {
+        props.style = style
+      } else if (Array.isArray(props.style)) {
+        const newStyle = props.style.slice()
+        newStyle.unshift(style)
+        props.style = newStyle
+      } else {
+        props.style = [style, props.style]
       }
     }
     return props
