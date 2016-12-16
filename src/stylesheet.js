@@ -67,6 +67,33 @@ function mergeTo (target, source) {
   }
 }
 
+function mergeRules (props, rules) {
+  const ownStyle = props.style
+  const style = {}
+  let isStyle = false
+  for (let i in rules) {
+    const rule = rules[i]
+    if (rule.props !== undefined) {
+      mergeTo(props, rule.props)
+    }
+    if (rule.style !== undefined) {
+      mergeTo(style, rule.style)
+      isStyle = true
+    }
+  }
+  if (isStyle) {
+    if (ownStyle === undefined) {
+      props.style = style
+    } else if (Array.isArray(ownStyle)) {
+      const newStyle = ownStyle.slice()
+      newStyle.unshift(style)
+      props.style = newStyle
+    } else {
+      props.style = [style, ownStyle]
+    }
+  }
+}
+
 function shallowClone (props) {
   const ret = {}
   if (props !== undefined) {
@@ -139,29 +166,7 @@ class Stylesheet {
     const ctx = parseContext(context)
     const rules = []
     this.collectRules(rules, ctx)
-    const style = {}
-    let isStyle = false
-    for (let i in rules) {
-      const rule = rules[i]
-      if (rule.props !== undefined) {
-        mergeTo(props, rule.props)
-      }
-      if (rule.style !== undefined) {
-        mergeTo(style, rule.style)
-        isStyle = true
-      }
-    }
-    if (isStyle) {
-      if (props.style === undefined) {
-        props.style = style
-      } else if (Array.isArray(props.style)) {
-        const newStyle = props.style.slice()
-        newStyle.unshift(style)
-        props.style = newStyle
-      } else {
-        props.style = [style, props.style]
-      }
-    }
+    mergeRules(props, rules)
     return props
   }
   collectRules (target, ctx) {
