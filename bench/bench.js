@@ -86,25 +86,18 @@ s.addDefaultRules({
 
 const suite = new Benchmark.Suite()
 let props
-suite.add('plain props', function () {
-  const p = {style: {fontSize: 8}}
-  props = p
-  if (props.style.fontSize !== 8) {
-    throw new Error('fontSize != 8')
+suite.add('new theme & props', function () {
+  props = s.getProps('App AppView Elem Item Text', {prop1: 1})
+  if (props.style.fontSize !== 12) {
+    throw new Error('fontSize != 12')
   }
+  s.cache = {}
 })
 suite.add('new theme & props (cached)', function () {
   props = s.getProps('App AppView Elem Item Text', {prop1: 1})
   if (props.style.fontSize !== 12) {
     throw new Error('fontSize != 12')
   }
-})
-suite.add('new theme & props (no cache)', function () {
-  props = s.getProps('App AppView Elem Item Text', {prop1: 1})
-  if (props.style.fontSize !== 12) {
-    throw new Error('fontSize != 12')
-  }
-  s.cache = {}
 })
 suite.on('cycle', function (e) {
   console.log(String(e.target))
