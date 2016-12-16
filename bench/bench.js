@@ -91,13 +91,6 @@ suite.add('new theme & props', function () {
   if (props.style.fontSize !== 12) {
     throw new Error('fontSize != 12')
   }
-  s.cache = {}
-})
-suite.add('new theme & props (cached)', function () {
-  props = s.getProps('App AppView Elem Item Text', {prop1: 1})
-  if (props.style.fontSize !== 12) {
-    throw new Error('fontSize != 12')
-  }
 })
 suite.on('cycle', function (e) {
   console.log(String(e.target))

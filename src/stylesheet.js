@@ -47,60 +47,12 @@ class Rule {
     this.props = props.props
     this.style = props.style
     this.mixins = props.mixins
-    this.resolvedProps = undefined
-    this.resolvedStyle = undefined
-    this.resolveGen = 0
   }
   getKey () { return this.selector.getName() }
   getSelector () { return this.selector.getValue() }
   getRank () { return this.rank }
   getOrder () { return this.selector.getOrder() }
   matchContext (name, context) { return this.selector.matchContext(name, context) }
-  resolve (s) {
-    if (this.resolveGen !== s.ngen) {
-      this.doResolution(s)
-      this.resolveGen = s.ngen
-    }
-    return {
-      props: this.resolvedProps,
-      style: this.resolvedStyle
-    }
-  }
-  doResolution (s) {
-    if (this.mixins === undefined) {
-      this.resolvedProps = this.props
-      this.resolvedStyle = this.style
-      return
-    }
-    // reset
-    let props
-    let style
-    if (this.props !== undefined) {
-      props = {}
-      mergeTo(props, this.props)
-    }
-    if (this.style !== undefined) {
-      style = {}
-      mergeTo(style, this.style)
-    }
-    for (let k in this.mixins) {
-      const rules = s.getRules(this.mixins[k])
-      for (let i in rules) {
-        const rule = rules[i]
-        const data = rule.resolve(s)
-        if (data.props !== undefined) {
-          if (props === undefined) props = {}
-          mergeTo(props, data.props)
-        }
-        if (data.style !== undefined) {
-          if (style === undefined) style = {}
-          mergeTo(style, data.style)
-        }
-      }
-    }
-    this.resolvedProps = props
-    this.resolvedStyle = style
-  }
 }
 
 function ruleComparator (r1, r2) {
@@ -118,11 +70,11 @@ function mergeTo (target, source) {
 function parseContext (context) {
   const spaceIdx = context.lastIndexOf(' ')
   if (spaceIdx === -1) {
-    return {name: context, rest: undefined}
+    return makeRuleCtx(context, undefined)
   }
   const name = context.slice(spaceIdx + 1)
   const rest = context.slice(0, spaceIdx).split(' ')
-  return {name, rest}
+  return makeRuleCtx(name, rest)
 }
 
 function mergeToProps (target, props, style) {
@@ -142,30 +94,29 @@ function mergeToProps (target, props, style) {
   return ret
 }
 
+function makeRuleCtx (name, rest) {
+  return { name, rest }
+}
+
 class Stylesheet {
   constructor () {
     this.rules = {}
-    this.ngen = 0
   }
   addDefaultRules (rules) {
     for (let selector in rules) {
       this._addRule(selector, rules[selector], 0)
     }
-    this._resetCache()
   }
   addRules (rules) {
     for (let selector in rules) {
       this._addRule(selector, rules[selector], 1)
     }
-    this._resetCache()
   }
   addDefaultRule (selector, props) {
     this._addRule(selector, props, 0)
-    this._resetCache()
   }
   addRule (selector, props) {
     this._addRule(selector, props, 1)
-    this._resetCache()
   }
   _addRule (selectorValue, props, rank) {
     let selector
@@ -193,14 +144,22 @@ class Stylesheet {
     const data = this._resolve(context)
     return mergeToProps(ownProps, data.props, data.style)
   }
-  getRules (name) {
+  getRules (ctx) {
     const ret = []
-    if (this.rules[name] !== undefined) {
-      const rules = this.rules[name]
+    if (this.rules[ctx.name] !== undefined) {
+      const rules = this.rules[ctx.name]
       for (let i in rules) {
         const rule = rules[i]
-        if (rule.matchContext(name)) {
+        if (rule.matchContext(ctx.name, ctx.rest)) {
           ret.push(rule)
+          if (rule.mixins !== undefined) {
+            for (let j = 0; j < rule.mixins.length; ++j) {
+              const mixinRules = this.getRules(makeRuleCtx(rule.mixins[j], ctx.rest))
+              for (let k = 0; k < mixinRules.length; ++k) {
+                ret.push(mixinRules[k])
+              }
+            }
+          }
         }
       }
     }
@@ -208,28 +167,20 @@ class Stylesheet {
   }
   _resolve (context) {
     const ctx = parseContext(context)
+    const rules = this.getRules(ctx)
     let props, style
-    if (this.rules[ctx.name] !== undefined) {
-      const rules = this.rules[ctx.name]
-      for (let i in rules) {
-        const rule = rules[i]
-        if (rule.matchContext(ctx.name, ctx.rest)) {
-          const data = rule.resolve(this)
-          if (data.props !== undefined) {
-            if (props === undefined) props = {}
-            mergeTo(props, data.props)
-          }
-          if (data.style !== undefined) {
-            if (style === undefined) style = {}
-            mergeTo(style, data.style)
-          }
-        }
+    for (let i in rules) {
+      const rule = rules[i]
+      if (rule.props !== undefined) {
+        if (props === undefined) props = {}
+        mergeTo(props, rule.props)
+      }
+      if (rule.style !== undefined) {
+        if (style === undefined) style = {}
+        mergeTo(style, rule.style)
       }
     }
     return {props, style}
-  }
-  _resetCache () {
-    this.ngen++
   }
 }
 
