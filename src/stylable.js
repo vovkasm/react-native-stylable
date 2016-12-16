@@ -14,34 +14,30 @@ export default function stylable (name) {
       static WrappedComponent = WrappedComponent
       static contextTypes = {
         styleSheet: PropTypes.object.isRequired,
-        styleSheetContext: PropTypes.string.isRequired
+        styleSheetContext: PropTypes.string
       }
       static childContextTypes = {
-        styleSheet: PropTypes.object.isRequired,
         styleSheetContext: PropTypes.string.isRequired
       }
 
       constructor (props, ctx) {
         super(props, ctx)
         this.styleSheet = ctx.styleSheet
-        let path = ctx.styleSheetContext
-        if (path.length === 0) {
-          path = name
+        if (ctx.styleSheetContext === undefined) {
+          this.path = name
         } else {
-          path += ' ' + name
+          this.path = ctx.styleSheetContext + ' ' + name
         }
-        this.styleSheetContext = path
       }
 
       getChildContext () {
         return {
-          styleSheet: this.styleSheet,
-          styleSheetContext: this.styleSheetContext
+          styleSheetContext: this.path
         }
       }
 
       render () {
-        const props = this.styleSheet.getProps(this.styleSheetContext, this.props)
+        const props = this.styleSheet.getProps(this.path, this.props)
         return React.createElement(WrappedComponent, props)
       }
     }
