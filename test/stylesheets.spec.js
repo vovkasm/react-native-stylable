@@ -101,7 +101,8 @@ describe('Stylesheet', function () {
   describe('mixins', function () {
     beforeEach(function () {
       s.addRules({
-        'defaultFont': {style: {fontSize: 10, fontFamily: 'Helvetica'}}
+        'defaultFont': {style: {fontSize: 10, fontFamily: 'Helvetica'}},
+        'Intro defaultFont': {style: {fontSize: 20}}
       })
       s.addDefaultRules({
         'Text': {mixins: ['defaultFont'], style: {horizontalMargin: 2}}
@@ -134,6 +135,11 @@ describe('Stylesheet', function () {
       })
       expect(s.getProps('App Text2')).to.be.deep.equal({
         style: { fontSize: 10, fontFamily: 'Helvetica', fontWeight: 'bold' }
+      })
+    })
+    it('in context', function () {
+      expect(s.getProps('App Intro Text')).to.be.deep.equal({
+        style: { fontSize: 20, fontFamily: 'Helvetica', horizontalMargin: 2 }
       })
     })
   })
