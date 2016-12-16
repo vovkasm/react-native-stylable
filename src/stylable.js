@@ -13,39 +13,35 @@ export default function stylable (name) {
       static displayName = stylableDisplayName
       static WrappedComponent = WrappedComponent
       static contextTypes = {
-        styleSheetContext: PropTypes.object
+        styleSheet: PropTypes.object.isRequired,
+        styleSheetContext: PropTypes.string.isRequired
       }
       static childContextTypes = {
-        styleSheetContext: PropTypes.object
-      }
-      static propTypes = {
-        styleSheet: PropTypes.object
+        styleSheet: PropTypes.object.isRequired,
+        styleSheetContext: PropTypes.string.isRequired
       }
 
       constructor (props, ctx) {
         super(props, ctx)
-        let sCtx
-        if (props.styleSheet !== undefined) {
-          sCtx = {
-            path: undefined,
-            styleSheet: props.styleSheet
-          }
+        this.styleSheet = ctx.styleSheet
+        let path = ctx.styleSheetContext
+        if (path.length === 0) {
+          path = name
         } else {
-          const path = ctx.styleSheetContext === undefined ? name : ctx.styleSheetContext.path + ' ' + name
-          sCtx = {
-            path: path,
-            styleSheet: ctx.styleSheetContext.styleSheet
-          }
+          path += ' ' + name
         }
-        this.sCtx = sCtx
+        this.styleSheetContext = path
       }
 
       getChildContext () {
-        return {styleSheetContext: this.sCtx}
+        return {
+          styleSheet: this.styleSheet,
+          styleSheetContext: this.styleSheetContext
+        }
       }
 
       render () {
-        const props = this.sCtx.styleSheet.getProps(this.sCtx.path, this.props)
+        const props = this.styleSheet.getProps(this.styleSheetContext, this.props)
         return React.createElement(WrappedComponent, props)
       }
     }

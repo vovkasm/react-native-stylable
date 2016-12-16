@@ -6,7 +6,8 @@ export default class Provider extends React.Component {
     children: PropTypes.element.isRequired
   }
   static childContextTypes = {
-    styleSheetContext: PropTypes.object.isRequired
+    styleSheet: PropTypes.object.isRequired,
+    styleSheetContext: PropTypes.string.isRequired
   }
 
   constructor (props, ctx) {
@@ -14,7 +15,7 @@ export default class Provider extends React.Component {
     this.styleSheet = props.styleSheet
   }
   getChildContext () {
-    return {styleSheetContext: {path: undefined, styleSheet: this.styleSheet}}
+    return {styleSheetContext: '', styleSheet: this.styleSheet}
   }
   render () {
     return Children.only(this.props.children)
