@@ -165,10 +165,14 @@ class Stylesheet {
 
     const ctx = parseContext(context)
     const rules = []
-    if (variants !== undefined && Array.isArray(variants)) {
-      for (let i = 0; i < variants.length; ++i) {
-        const variant = variants[i]
-        this.collectRules(rules, makeRuleCtx(ctx.name + '.' + variant, ctx.rest))
+    if (variants !== undefined) {
+      if (Array.isArray(variants)) {
+        for (let i = 0; i < variants.length; ++i) {
+          const variant = variants[i]
+          this.collectRules(rules, makeRuleCtx(ctx.name + '.' + variant, ctx.rest))
+        }
+      } else {
+        this.collectRules(rules, makeRuleCtx(ctx.name + '.' + variants, ctx.rest))
       }
     }
     this.collectRules(rules, ctx)

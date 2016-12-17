@@ -4,10 +4,36 @@ import hoistStatics from 'hoist-non-react-statics'
 import { Signal } from './mini-signals'
 
 class Path {
-  constructor (name, parent) {
+  constructor (name, variant, parent) {
     this.name = name
-    this.path = parent === undefined ? name : parent.path + ' ' + name
+    this.variant = variant
+    this.parent = parent
     this.changed = new Signal()
+    this.path = undefined
+    this.fullPath = undefined
+    this.resolvePath()
+  }
+  setVariant (variant) {
+    this.variant = variant
+    this.resolvePath()
+  }
+  update () {
+    this.resolvePath()
+  }
+  resolvePath () {
+    const path = this.parent === undefined ? this.name : this.parent.fullPath + ' ' + this.name
+    let fullPath = path
+    if (this.variant !== undefined) {
+      if (Array.isArray(this.variant)) {
+        fullPath += '.' + this.variant.join('.')
+      } else {
+        fullPath += '.' + this.variant
+      }
+    }
+    const needNotify = this.fullPath !== undefined && this.fullPath !== fullPath
+    this.path = path
+    this.fullPath = fullPath
+    if (needNotify) this.changed.dispatch()
   }
 }
 
@@ -29,11 +55,48 @@ export default function stylable (name) {
       static childContextTypes = {
         styleSheetPath: PropTypes.object.isRequired
       }
+      static propTypes = {
+        variant: PropTypes.any
+      }
 
       constructor (props, ctx) {
         super(props, ctx)
         this.styleSheet = ctx.styleSheet
-        this.path = new Path(name, ctx.styleSheetPath)
+        this.path = new Path(name, props.variant, ctx.styleSheetPath)
+        this.parentSubscription = undefined
+        this.state = { childProps: this.getChildProps(props) }
+      }
+
+      componentWillReceiveProps (nextProps) {
+        if (this.path.variant !== nextProps.variant) {
+          this.path.setVariant(nextProps.variant)
+        }
+        this.setState({ childProps: this.getChildProps(nextProps) })
+      }
+
+      componentDidMount () {
+        const parentPath = this.path.parent
+        if (parentPath !== undefined) {
+          this.parentSubscription = parentPath.changed.add(this.parentChanged, this)
+        }
+      }
+
+      componentWillUnmount () {
+        if (this.parentSubscription !== undefined) {
+          this.parentSubscription.detach()
+          this.parentSubscription = undefined
+        }
+      }
+
+      parentChanged () {
+        this.path.update()
+        this.setState({ childProps: this.getChildProps(this.props) })
+      }
+
+      getChildProps (props) {
+        const childProps = this.styleSheet.getProps(this.path.path, props, props.variant)
+        delete childProps.variant
+        return childProps
       }
 
       getChildContext () {
@@ -43,8 +106,7 @@ export default function stylable (name) {
       }
 
       render () {
-        const props = this.styleSheet.getProps(this.path.path, this.props)
-        return React.createElement(WrappedComponent, props)
+        return React.createElement(WrappedComponent, this.state.childProps)
       }
     }
 
