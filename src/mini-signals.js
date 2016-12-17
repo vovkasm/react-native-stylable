@@ -1,10 +1,10 @@
 // Initially from https://github.com/Hypercubed/mini-signals but specialized for owr needs
 
-export class MiniSignalBinding {
+export class SignalBinding {
 
   /**
-  * MiniSignalBinding constructor.
-  * @constructs MiniSignalBinding
+  * SignalBinding constructor.
+  * @constructs SignalBinding
   * @param {Function} fn Event handler to be called.
   * @param {Mixed} [thisArg] The context of the callback function.
   * @api private
@@ -26,7 +26,7 @@ export class MiniSignalBinding {
 /**
 * @private
 */
-function _addMiniSignalBinding (self, node) {
+function _addSignalBinding (self, node) {
   if (!self._head) {
     self._head = node
     self._tail = node
@@ -41,15 +41,15 @@ function _addMiniSignalBinding (self, node) {
   return node
 }
 
-export class MiniSignal {
+export class Signal {
 
   /**
-  * MiniSignal constructor.
-  * @constructs MiniSignal
+  * Signal constructor.
+  * @constructs Signal
   * @api public
   *
   * @example
-  * let mySignal = new MiniSignal();
+  * let mySignal = new Signal();
   * let binding = mySignal.add(onSignal);
   * mySignal.dispatch('foo', 'bar');
   * mySignal.detach(binding);
@@ -59,10 +59,10 @@ export class MiniSignal {
   }
 
   /**
-  * Return an array of attached MiniSignalBinding.
+  * Return an array of attached SignalBinding.
   *
   * @param {Boolean} [exists=false] We only need to know if there are handlers.
-  * @returns {MiniSignalBinding[]|Boolean} Array of attached MiniSignalBinding or Boolean if called with exists = true
+  * @returns {SignalBinding[]|Boolean} Array of attached SignalBinding or Boolean if called with exists = true
   * @api public
   */
   handlers (exists = false) {
@@ -81,15 +81,15 @@ export class MiniSignal {
   }
 
   /**
-  * Return true if node is a MiniSignalBinding attached to this MiniSignal
+  * Return true if node is a SignalBinding attached to this Signal
   *
-  * @param {MiniSignalBinding} node Node to check.
+  * @param {SignalBinding} node Node to check.
   * @returns {Boolean} True if node is attache to mini-signal
   * @api public
   */
   has (node) {
-    if (!(node instanceof MiniSignalBinding)) {
-      throw new Error('MiniSignal#has(): First arg must be a MiniSignalBinding object.')
+    if (!(node instanceof SignalBinding)) {
+      throw new Error('Signal#has(): First arg must be a SignalBinding object.')
     }
 
     return node._owner === this
@@ -119,25 +119,25 @@ export class MiniSignal {
   *
   * @param {Function} fn Callback function.
   * @param {Mixed} [thisArg] The context of the callback function.
-  * @returns {MiniSignalBinding} The MiniSignalBinding node that was added.
+  * @returns {SignalBinding} The SignalBinding node that was added.
   * @api public
   */
   add (fn, thisArg = null) {
     if (typeof fn !== 'function') {
-      throw new Error('MiniSignal#add(): First arg must be a Function.')
+      throw new Error('Signal#add(): First arg must be a Function.')
     }
-    return _addMiniSignalBinding(this, new MiniSignalBinding(fn, thisArg))
+    return _addSignalBinding(this, new SignalBinding(fn, thisArg))
   }
 
   /**
   * Remove binding object.
   *
-  * @param {MiniSignalBinding} node The binding node that will be removed.
-  * @returns {MiniSignal} The instance on which this method was called.
+  * @param {SignalBinding} node The binding node that will be removed.
+  * @returns {Signal} The instance on which this method was called.
   * @api public */
   detach (node) {
-    if (!(node instanceof MiniSignalBinding)) {
-      throw new Error('MiniSignal#detach(): First arg must be a MiniSignalBinding object.')
+    if (!(node instanceof SignalBinding)) {
+      throw new Error('Signal#detach(): First arg must be a SignalBinding object.')
     }
     if (node._owner !== this) return this  // todo: or error?
 
@@ -161,7 +161,7 @@ export class MiniSignal {
   /**
   * Detach all listeners.
   *
-  * @returns {MiniSignal} The instance on which this method was called.
+  * @returns {Signal} The instance on which this method was called.
   * @api public
   */
   detachAll () {

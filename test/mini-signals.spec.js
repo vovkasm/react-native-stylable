@@ -2,19 +2,19 @@
 
 import { expect } from 'chai'
 
-import { MiniSignal, MiniSignalBinding } from '../src/mini-signals'
+import { Signal, SignalBinding } from '../src/mini-signals'
 
-describe('MiniSignal', function tests () {
+describe('Signal', function tests () {
   'use strict'
 
   it('inherits when used with require(util).inherits', function () {
-    class Beast extends MiniSignal { }
+    class Beast extends Signal { }
 
     var moop = new Beast()
     var meap = new Beast()
 
     expect(moop).to.instanceof(Beast)
-    expect(meap).to.instanceof(MiniSignal)
+    expect(meap).to.instanceof(Signal)
 
     moop.handlers()
     meap.handlers()
@@ -30,14 +30,14 @@ describe('MiniSignal', function tests () {
 
   it('quick test', function () {
     var pattern = []
-    var e = new MiniSignal()
+    var e = new Signal()
 
     var foo = e.add(writer, 'foo')
     e.add(writer, 'baz')
     var bar = e.add(writer, 'bar')
 
-    expect(e).to.instanceof(MiniSignal)
-    expect(foo).to.instanceof(MiniSignalBinding)
+    expect(e).to.instanceof(Signal)
+    expect(foo).to.instanceof(SignalBinding)
 
     e.dispatch('banana')
     e.dispatch('appple')
@@ -58,22 +58,22 @@ describe('MiniSignal', function tests () {
     }
   })
 
-  describe('MiniSignal#add', function () {
+  describe('Signal#add', function () {
     let e
 
     beforeEach(function () {
-      e = new MiniSignal()
+      e = new Signal()
     })
 
     it('should throw error for incorrect types', function () {
-      expect(function () { e.add() }).to.throw('MiniSignal#add(): First arg must be a Function.')
-      expect(function () { e.add(123) }).to.throw('MiniSignal#add(): First arg must be a Function.')
-      expect(function () { e.add(true) }).to.throw('MiniSignal#add(): First arg must be a Function.')
+      expect(function () { e.add() }).to.throw('Signal#add(): First arg must be a Function.')
+      expect(function () { e.add(123) }).to.throw('Signal#add(): First arg must be a Function.')
+      expect(function () { e.add(true) }).to.throw('Signal#add(): First arg must be a Function.')
       expect(e.handlers()).to.be.empty
     })
   })
 
-  describe('MiniSignal#dispatch', function () {
+  describe('Signal#dispatch', function () {
     function writer () {
       pattern += this
     }
@@ -81,7 +81,7 @@ describe('MiniSignal', function tests () {
     var e, context, pattern
 
     beforeEach(function () {
-      e = new MiniSignal()
+      e = new Signal()
       context = { bar: 'baz' }
       pattern = ''
     })
@@ -115,7 +115,7 @@ describe('MiniSignal', function tests () {
 
     it('can dispatch the function with multiple arguments', function () {
       for (var i = 0; i < 100; i++) {
-        e = new MiniSignal();
+        e = new Signal();
         (function (j) {
           for (var i = 0, args = []; i < j; i++) {
             args.push(j)
@@ -132,7 +132,7 @@ describe('MiniSignal', function tests () {
 
     it('can dispatch the function with multiple arguments, multiple listeners', function () {
       for (var i = 0; i < 100; i++) {
-        e = new MiniSignal();
+        e = new Signal();
         (function (j) {
           for (var i = 0, args = []; i < j; i++) {
             args.push(j)
@@ -213,7 +213,7 @@ describe('MiniSignal', function tests () {
     })
 
     it('receives the emitted events', function (done) {
-      var e = new MiniSignal()
+      var e = new Signal()
 
       e.add(function (a, b, c, d, undef) {
         expect(a).to.equal('foo')
@@ -229,7 +229,7 @@ describe('MiniSignal', function tests () {
     })
 
     it('emits to all event listeners', function () {
-      var e = new MiniSignal()
+      var e = new Signal()
       var pattern = []
 
       e.add(function () {
@@ -246,7 +246,7 @@ describe('MiniSignal', function tests () {
     })
 
     it('emits to all event listeners', function () {
-      var e = new MiniSignal()
+      var e = new Signal()
       var pattern = []
 
       function foo1 () {
@@ -271,31 +271,31 @@ describe('MiniSignal', function tests () {
     })
   })
 
-  describe('MiniSignal#handlers', function () {
+  describe('Signal#handlers', function () {
     /* istanbul ignore next */
     function foo () {}
 
     it('returns an empty array if no handlers are added', function () {
-      var e = new MiniSignal()
+      var e = new Signal()
 
       expect(e.handlers()).to.be.instanceof(Array)
       expect(e.handlers().length).to.equal(0)
     })
 
-    it('returns an array of MiniSignalBinding', function () {
-      var e = new MiniSignal()
+    it('returns an array of SignalBinding', function () {
+      var e = new Signal()
 
       e.add(foo)
       e.add(foo)
       expect(e.handlers()).to.be.instanceof(Array)
       expect(e.handlers().length).to.equal(2)
       e.handlers().forEach(function (h) {
-        expect(h).to.be.instanceof(MiniSignalBinding)
+        expect(h).to.be.instanceof(SignalBinding)
       })
     })
 
     it('is not vulnerable to modifications', function () {
-      var e = new MiniSignal()
+      var e = new Signal()
 
       e.add(foo)
       e.add(foo)
@@ -305,12 +305,12 @@ describe('MiniSignal', function tests () {
       e.handlers().length = 0
       expect(e.handlers().length).to.equal(2)
       e.handlers().forEach(function (h) {
-        expect(h).to.be.instanceof(MiniSignalBinding)
+        expect(h).to.be.instanceof(SignalBinding)
       })
     })
 
     it('can return a boolean as indication if handlers exist', function () {
-      var e = new MiniSignal()
+      var e = new Signal()
 
       e.add(foo)
       e.add(foo)
@@ -327,7 +327,7 @@ describe('MiniSignal', function tests () {
     })
   })
 
-  describe('MiniSignal#detach', function () {
+  describe('Signal#detach', function () {
     /* istanbul ignore next */
     function foo () {
       pattern.push('foo')
@@ -351,14 +351,14 @@ describe('MiniSignal', function tests () {
     var e, pattern
 
     beforeEach(function () {
-      e = new MiniSignal()
+      e = new Signal()
       pattern = []
     })
 
     it('should throw an error if not a SignalBinding', function () {
-      expect(function () { e.detach() }).to.throw('MiniSignal#detach(): First arg must be a MiniSignalBinding object.')
-      expect(function () { e.detach(1) }).to.throw('MiniSignal#detach(): First arg must be a MiniSignalBinding object.')
-      expect(function () { e.detach(bar) }).to.throw('MiniSignal#detach(): First arg must be a MiniSignalBinding object.')
+      expect(function () { e.detach() }).to.throw('Signal#detach(): First arg must be a SignalBinding object.')
+      expect(function () { e.detach(1) }).to.throw('Signal#detach(): First arg must be a SignalBinding object.')
+      expect(function () { e.detach(bar) }).to.throw('Signal#detach(): First arg must be a SignalBinding object.')
     })
 
     it('should only remove the event with the specified node', function () {
@@ -483,7 +483,7 @@ describe('MiniSignal', function tests () {
     })
 
     it('can only detach from same signal', function () {
-      var e2 = new MiniSignal()
+      var e2 = new Signal()
 
       var binding = e.add(foo)
       e2.detach(binding)
@@ -501,14 +501,14 @@ describe('MiniSignal', function tests () {
     })
   })
 
-  describe('MiniSignal#detachAll', function () {
+  describe('Signal#detachAll', function () {
     /* istanbul ignore next */
     function oops () { throw new Error('oops') }
 
     var e
 
     beforeEach(function () {
-      e = new MiniSignal()
+      e = new Signal()
     })
 
     it('removes all events', function () {
@@ -539,14 +539,14 @@ describe('MiniSignal', function tests () {
     })
   })
 
-  describe('MiniSignal#has', function () {
+  describe('Signal#has', function () {
     /* istanbul ignore next */
     function oops () { throw new Error('oops') }
 
     var e
 
     beforeEach(function () {
-      e = new MiniSignal()
+      e = new Signal()
     })
 
     it('has returns true if bound', function () {
@@ -555,7 +555,7 @@ describe('MiniSignal', function tests () {
     })
 
     it('has returns false if bound to another signal', function () {
-      var e2 = new MiniSignal()
+      var e2 = new Signal()
       var binding = e2.add(oops)
       expect(e.has(binding)).to.be.false
     })
@@ -575,13 +575,13 @@ describe('MiniSignal', function tests () {
     })
 
     it('should throw error for incorrect types', function () {
-      expect(function () { e.has({}) }).to.throw('MiniSignal#has(): First arg must be a MiniSignalBinding object.')
+      expect(function () { e.has({}) }).to.throw('Signal#has(): First arg must be a SignalBinding object.')
     })
   })
 
   describe('Readme Examples', function () {
     it('Example Usage', function () {
-      var mySignal = new MiniSignal()
+      var mySignal = new Signal()
 
       var binding = mySignal.add(onSignal)   // add listener
       mySignal.dispatch('foo', 'bar')        // dispatch signal passing custom parameters
@@ -596,7 +596,7 @@ describe('MiniSignal', function tests () {
     it('Another Example', function () {
       var myObject = {
         foo: 'bar',
-        updated: new MiniSignal()
+        updated: new Signal()
       }
 
       myObject.updated.add(onUpdated, myObject)   // add listener with context
@@ -611,7 +611,7 @@ describe('MiniSignal', function tests () {
     })
 
     it('Function#bind example', function () {
-      var mySignal = new MiniSignal()
+      var mySignal = new Signal()
       var context = {}
 
       var cb = function (bar) {
@@ -626,7 +626,7 @@ describe('MiniSignal', function tests () {
     })
 
     it('Function#bind example with parameters', function () {
-      var mySignal = new MiniSignal()
+      var mySignal = new Signal()
       var context = {}
       var cb = function (bar) {
         expect(arguments).to.have.lengthOf(1)
