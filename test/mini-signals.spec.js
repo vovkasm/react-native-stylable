@@ -5,29 +5,6 @@ import { expect } from 'chai'
 import { Signal, SignalBinding } from '../src/mini-signals'
 
 describe('Signal', function tests () {
-  'use strict'
-
-  it('inherits when used with require(util).inherits', function () {
-    class Beast extends Signal { }
-
-    var moop = new Beast()
-    var meap = new Beast()
-
-    expect(moop).to.instanceof(Beast)
-    expect(meap).to.instanceof(Signal)
-
-    moop.handlers()
-    meap.handlers()
-
-    /* istanbul ignore next */
-    moop.add(function () {
-      throw new Error('I should not dispatch')
-    })
-
-    meap.dispatch('rawr')
-    meap.detachAll()
-  })
-
   it('quick test', function () {
     var pattern = []
     var e = new Signal()
