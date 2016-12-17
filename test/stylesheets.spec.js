@@ -152,4 +152,20 @@ describe('Stylesheet', function () {
       })
     })
   })
+  describe('variants', function () {
+    beforeEach(function () {
+      s.addDefaultRules({
+        'Header': {style: {fontSize: 10}},
+        'Header.active': {style: {fontWeight: 'bold'}}
+      })
+    })
+    it('follow variants', function () {
+      expect(s.getProps('App Header', {}, ['active'])).to.be.deep.equal({
+        style: {fontSize: 10, fontWeight: 'bold'}
+      })
+      expect(s.getProps('App Header', {}, [])).to.be.deep.equal({
+        style: {fontSize: 10}
+      })
+    })
+  })
 })

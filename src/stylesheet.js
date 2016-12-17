@@ -160,11 +160,17 @@ class Stylesheet {
     }
     this.rules[key].sort(ruleComparator)
   }
-  getProps (context, ownProps) {
+  getProps (context, ownProps, variants) {
     const props = shallowClone(ownProps)
 
     const ctx = parseContext(context)
     const rules = []
+    if (variants !== undefined && Array.isArray(variants)) {
+      for (let i = 0; i < variants.length; ++i) {
+        const variant = variants[i]
+        this.collectRules(rules, makeRuleCtx(ctx.name + '.' + variant, ctx.rest))
+      }
+    }
     this.collectRules(rules, ctx)
     mergeRules(props, rules)
     return props
