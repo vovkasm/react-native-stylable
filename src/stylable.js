@@ -1,6 +1,16 @@
 import React, { PropTypes } from 'react'
 import hoistStatics from 'hoist-non-react-statics'
 
+import { Signal } from './mini-signals'
+
+class Path {
+  constructor (name, parent) {
+    this.name = name
+    this.path = parent === undefined ? name : parent.path + ' ' + name
+    this.changed = new Signal()
+  }
+}
+
 function getDisplayName (comp) {
   return comp.displayName || comp.name || 'Component'
 }
@@ -14,30 +24,26 @@ export default function stylable (name) {
       static WrappedComponent = WrappedComponent
       static contextTypes = {
         styleSheet: PropTypes.object.isRequired,
-        styleSheetContext: PropTypes.string
+        styleSheetPath: PropTypes.object
       }
       static childContextTypes = {
-        styleSheetContext: PropTypes.string.isRequired
+        styleSheetPath: PropTypes.object.isRequired
       }
 
       constructor (props, ctx) {
         super(props, ctx)
         this.styleSheet = ctx.styleSheet
-        if (ctx.styleSheetContext === undefined) {
-          this.path = name
-        } else {
-          this.path = ctx.styleSheetContext + ' ' + name
-        }
+        this.path = new Path(name, ctx.styleSheetPath)
       }
 
       getChildContext () {
         return {
-          styleSheetContext: this.path
+          styleSheetPath: this.path
         }
       }
 
       render () {
-        const props = this.styleSheet.getProps(this.path, this.props)
+        const props = this.styleSheet.getProps(this.path.path, this.props)
         return React.createElement(WrappedComponent, props)
       }
     }
