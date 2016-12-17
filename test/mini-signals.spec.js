@@ -58,35 +58,6 @@ describe('MiniSignal', function tests () {
     }
   })
 
-  describe('MiniSignal#once', function () {
-    let e, context
-
-    beforeEach(function () {
-      e = new MiniSignal()
-      context = { bar: 'baz' }
-    })
-
-    it('should throw error for incorrect types', function () {
-      expect(function () { e.once() }).throw('MiniSignal#once(): First arg must be a Function.')
-      expect(function () { e.once(123) }).throw('MiniSignal#once(): First arg must be a Function.')
-      expect(function () { e.once(true) }).throw('MiniSignal#once(): First arg must be a Function.')
-      expect(e.handlers()).to.be.empty
-    })
-
-    it('should not invoke twice', function () {
-      var cb = function (bar) {
-        expect(bar).to.be.equal('bar')
-        expect(this).to.be.equal(context)
-        expect(arguments).to.have.lengthOf(1)
-        e.dispatch('bar')
-      }.bind(context)
-
-      e.once(cb)
-
-      e.dispatch('bar')
-    })
-  })
-
   describe('MiniSignal#add', function () {
     let e
 
@@ -297,32 +268,6 @@ describe('MiniSignal', function tests () {
       e.dispatch()
 
       expect(pattern.join(';')).to.equal('foo1;foo2;foo3')
-    })
-
-    it('emits to all event listeners, removes once', function () {
-      var e = new MiniSignal()
-      var pattern = []
-
-      function foo1 () {
-        pattern.push('foo1')
-      }
-
-      function foo2 () {
-        pattern.push('foo2')
-      }
-
-      function foo3 () {
-        pattern.push('foo3')
-      }
-
-      e.add(foo1)
-      e.once(foo2)
-      e.add(foo3)
-
-      e.dispatch()
-      e.dispatch()
-
-      expect(pattern.join(';')).to.equal('foo1;foo2;foo3;foo1;foo3')
     })
   })
 

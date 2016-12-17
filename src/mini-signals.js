@@ -6,13 +6,11 @@ export class MiniSignalBinding {
   * MiniSignalBinding constructor.
   * @constructs MiniSignalBinding
   * @param {Function} fn Event handler to be called.
-  * @param {Boolean} [once=false] Should this listener be removed after dispatch
   * @param {Mixed} [thisArg] The context of the callback function.
   * @api private
   */
-  constructor (fn, once = false, thisArg) {
+  constructor (fn, thisArg) {
     this._fn = fn
-    this._once = once
     this._thisArg = thisArg
     this._next = this._prev = this._owner = null
   }
@@ -109,7 +107,6 @@ export class MiniSignal {
     if (!node) return false
 
     while (node) {
-      if (node._once) this.detach(node)
       node._fn.apply(node._thisArg, arguments)
       node = node._next
     }
@@ -129,22 +126,7 @@ export class MiniSignal {
     if (typeof fn !== 'function') {
       throw new Error('MiniSignal#add(): First arg must be a Function.')
     }
-    return _addMiniSignalBinding(this, new MiniSignalBinding(fn, false, thisArg))
-  }
-
-  /**
-  * Register a new listener that will be executed only once.
-  *
-  * @param {Function} fn Callback function.
-  * @param {Mixed} [thisArg] The context of the callback function.
-  * @returns {MiniSignalBinding} The MiniSignalBinding node that was added.
-  * @api public
-  */
-  once (fn, thisArg = null) {
-    if (typeof fn !== 'function') {
-      throw new Error('MiniSignal#once(): First arg must be a Function.')
-    }
-    return _addMiniSignalBinding(this, new MiniSignalBinding(fn, true, thisArg))
+    return _addMiniSignalBinding(this, new MiniSignalBinding(fn, thisArg))
   }
 
   /**
