@@ -118,15 +118,29 @@ function makeRuleCtx (name, rest) {
   return { name, rest }
 }
 
+/**
+ * Represents collections of all style rules.
+ *
+ **/
 class Stylesheet {
   constructor () {
     this.rules = {}
   }
+  /**
+   * Adds "default" lower priority rules to style sheet
+   *
+   * @param rules {Object} - key-value pairs, key is a selector, value is rule object
+   **/
   addDefaultRules (rules) {
     for (let selector in rules) {
       this._addRule(selector, rules[selector], 0)
     }
   }
+  /**
+   * Adds rules to style sheet
+   *
+   * @param rules {Object} - key-value pairs, key is a selector, value is rule object
+   **/
   addRules (rules) {
     for (let selector in rules) {
       this._addRule(selector, rules[selector], 1)
