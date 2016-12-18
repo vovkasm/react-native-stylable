@@ -12,8 +12,13 @@
     "require": [
       "babel-register"
     ],
-    "reporter": ["text","html"],
-    "include": ["src/**/*.js"],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "include": [
+      "src/**/*.js"
+    ],
     "sourceMap": false,
     "instrument": false
   },
