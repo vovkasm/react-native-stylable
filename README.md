@@ -162,7 +162,8 @@ React component that provides StyleSheet to other stylable components.
 ### stylable(name:String):Function
 
 Return function (`fn(component:Component):Component`) to produce Higher Order Component with `name` that
-pass props and style from StyleSheet to wrapped component.
+pass props and style from StyleSheet to wrapped component. Also generated component can accept one additional
+property - `variant` to dynamically change styles.
 
 ## Author
 
