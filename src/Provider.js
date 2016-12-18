@@ -1,6 +1,10 @@
 import React, { Children, PropTypes } from 'react'
 
-export default class Provider extends React.Component {
+/**
+ * Provides style sheet to its childs
+ * @param styleSheet {StyleSheet} - style sheet to pass down
+ **/
+class StyleProvider extends React.Component {
   static propTypes = {
     styleSheet: PropTypes.object.isRequired,
     children: PropTypes.element.isRequired
@@ -20,3 +24,5 @@ export default class Provider extends React.Component {
     return Children.only(this.props.children)
   }
 }
+
+export default StyleProvider
