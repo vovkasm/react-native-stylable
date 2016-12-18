@@ -2,13 +2,6 @@
 
 export class SignalBinding {
 
-  /**
-  * SignalBinding constructor.
-  * @constructs SignalBinding
-  * @param {Function} fn Event handler to be called.
-  * @param {Mixed} [thisArg] The context of the callback function.
-  * @api private
-  */
   constructor (fn, thisArg) {
     this._fn = fn
     this._thisArg = thisArg
@@ -23,9 +16,6 @@ export class SignalBinding {
 
 }
 
-/**
-* @private
-*/
 function _addSignalBinding (self, node) {
   if (!self._head) {
     self._head = node
@@ -43,28 +33,10 @@ function _addSignalBinding (self, node) {
 
 export class Signal {
 
-  /**
-  * Signal constructor.
-  * @constructs Signal
-  * @api public
-  *
-  * @example
-  * let mySignal = new Signal();
-  * let binding = mySignal.add(onSignal);
-  * mySignal.dispatch('foo', 'bar');
-  * mySignal.detach(binding);
-  */
   constructor () {
     this._head = this._tail = undefined
   }
 
-  /**
-  * Return an array of attached SignalBinding.
-  *
-  * @param {Boolean} [exists=false] We only need to know if there are handlers.
-  * @returns {SignalBinding[]|Boolean} Array of attached SignalBinding or Boolean if called with exists = true
-  * @api public
-  */
   handlers (exists = false) {
     let node = this._head
 
@@ -80,13 +52,6 @@ export class Signal {
     return ee
   }
 
-  /**
-  * Return true if node is a SignalBinding attached to this Signal
-  *
-  * @param {SignalBinding} node Node to check.
-  * @returns {Boolean} True if node is attache to mini-signal
-  * @api public
-  */
   has (node) {
     if (!(node instanceof SignalBinding)) {
       throw new Error('Signal#has(): First arg must be a SignalBinding object.')
@@ -95,12 +60,6 @@ export class Signal {
     return node._owner === this
   }
 
-  /**
-  * Dispaches a signal to all registered listeners.
-  *
-  * @returns {Boolean} Indication if we've emitted an event.
-  * @api public
-  */
   dispatch () {
     let node = this._head
 
@@ -114,14 +73,6 @@ export class Signal {
     return true
   }
 
-  /**
-  * Register a new listener.
-  *
-  * @param {Function} fn Callback function.
-  * @param {Mixed} [thisArg] The context of the callback function.
-  * @returns {SignalBinding} The SignalBinding node that was added.
-  * @api public
-  */
   add (fn, thisArg = null) {
     if (typeof fn !== 'function') {
       throw new Error('Signal#add(): First arg must be a Function.')
@@ -129,12 +80,6 @@ export class Signal {
     return _addSignalBinding(this, new SignalBinding(fn, thisArg))
   }
 
-  /**
-  * Remove binding object.
-  *
-  * @param {SignalBinding} node The binding node that will be removed.
-  * @returns {Signal} The instance on which this method was called.
-  * @api public */
   detach (node) {
     if (!(node instanceof SignalBinding)) {
       throw new Error('Signal#detach(): First arg must be a SignalBinding object.')
@@ -158,12 +103,6 @@ export class Signal {
     return this
   }
 
-  /**
-  * Detach all listeners.
-  *
-  * @returns {Signal} The instance on which this method was called.
-  * @api public
-  */
   detachAll () {
     let node = this._head
     if (!node) return this
