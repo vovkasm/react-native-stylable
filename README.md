@@ -113,6 +113,57 @@ class Item extends React.Component {
 export default stylable('Item')(Item)
 ```
 
+## API
+
+```javascript
+import { StyleSheet, StyleProvider, stylable } from 'react-native-stylable'
+```
+
+### Stylesheet
+
+Holds style rules.
+
+#### Constructor
+
+Creates new empty style sheet.
+
+```javascript
+const styleSheet = new StyleSheet()
+```
+
+#### addDefaultRules(rules:Object)
+
+Add default (low priority) rules to style sheet. This method intended to be called from custom components code to
+provide default styles.
+
+#### addRules(rules:Object)
+
+Add normal rules. This method intended to be called from application startup to provide customizations.
+
+#### Rules object
+
+Each rule has selector and properties.
+
+Selector is an element name or sequence of names separated by space
+(same as descendant selectors in CSS). Also any element name can be suffixed with variant with dot symbol
+(ex: `Button.active ButtonTitle`), variants works like classes in CSS.
+
+Properties is an object, that can contains `mixins`, `props` and `style` keys.
+ * `mixins` - Array of others element names.
+ * `props` - Properties to be added to React component.
+ * `style` - Styles to be added to `style` of React component.
+
+### StyleProvider
+
+React component that provides StyleSheet to other stylable components.
+
+`<StyleProvider styleSheet={styleSheet}>{other app components}</StyleSheet>`
+
+### stylable(name:String):Function
+
+Return function (`fn(component:Component):Component`) to produce Higher Order Component with `name` that
+pass props and style from StyleSheet to wrapped component.
+
 ## Author
 
 [Vladimir Timofeev](https://github.com/vovkasm)
