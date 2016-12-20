@@ -158,6 +158,10 @@ describe('Stylesheet', function () {
         'Header': {style: {fontSize: 10}},
         'Header.active': {style: {fontWeight: 'bold'}}
       })
+      s.addDefaultRules({
+        'Button Text': {style: {color: 'blue'}},
+        'Button.active Text': {style: {fontWeight: 'bold'}}
+      })
     })
     it('follow variants', function () {
       expect(s.getProps('App Header', {}, ['active'])).to.be.deep.equal({
@@ -165,6 +169,11 @@ describe('Stylesheet', function () {
       })
       expect(s.getProps('App Header', {}, [])).to.be.deep.equal({
         style: {fontSize: 10}
+      })
+    })
+    it.skip('follow parent variants', function () {
+      expect(s.getProps('Button.active Text')).to.be.deep.equal({
+        style: {color: 'blue', fontWeight: 'bold'}
       })
     })
   })
