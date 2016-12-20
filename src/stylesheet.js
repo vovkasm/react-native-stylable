@@ -40,6 +40,16 @@ class SimpleSelector {
   }
 }
 
+function parseSelector (value) {
+  let s
+  if (value.indexOf(' ') === -1) {
+    s = new SimpleSelector(value)
+  } else {
+    s = new Selector(value)
+  }
+  return s
+}
+
 class Rule {
   constructor (selector, props, rank) {
     this.selector = selector
@@ -153,12 +163,7 @@ class Stylesheet {
     this._addRule(selector, props, 1)
   }
   _addRule (selectorValue, props, rank) {
-    let selector
-    if (selectorValue.indexOf(' ') === -1) {
-      selector = new SimpleSelector(selectorValue)
-    } else {
-      selector = new Selector(selectorValue)
-    }
+    const selector = parseSelector(selectorValue)
     const rule = new Rule(selector, props, rank)
     const key = rule.getKey()
     if (this.rules[key] === undefined) {
