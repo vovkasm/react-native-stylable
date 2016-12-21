@@ -16,6 +16,11 @@ export default class Node {
     this.update()
   }
   getChildProps () { return this.childProps }
+  getName () { return this.name }
+  getParent () { return this.parent }
+  getStyleSheet () { return this.styleSheet }
+  getVariants () { return this.variant }
+
   subscribe (cb) {
     this.changeCb = cb
     if (this.parent !== undefined) {

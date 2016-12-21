@@ -1,56 +1,6 @@
 
-class Selector {
-  constructor (value) {
-    const chains = value.split(/\s+/)
-    const chainsCount = chains.length
-    this.value = value
-    this.chains = chains
-    this.name = chains[chainsCount - 1]
-    this.order = chainsCount
-  }
-  getName () { return this.name }
-  getOrder () { return this.order }
-  getValue () { return this.value }
-  matchContext (name, context) {
-    if (this.name !== name) return false
-    if (this.order === 1) return true // simple rule
-    if (context !== undefined) {
-      let j = this.order - 1
-      let i = context.length - 1
-      const chains = this.chains
-      while (i >= 0 && j > 0) {
-        if (chains[j - 1] === context[i]) --j
-        --i
-      }
-      if (j === 0) return true
-    }
-    return false
-  }
-}
-
-class SimpleSelector {
-  constructor (value) {
-    this.value = value
-  }
-  getName () { return this.value }
-  getOrder () { return 1 }
-  getValue () { return this.value }
-  matchContext (name, context) {
-    return name === this.value
-  }
-}
-
-function parseSelector (value) {
-  if (value.indexOf(' ') === -1) {
-    return parseSimpleSelector(value)
-  } else {
-    return new Selector(value)
-  }
-}
-
-function parseSimpleSelector (value) {
-  return new SimpleSelector(value)
-}
+import Node from './node'
+import { parseSelector } from './selectors'
 
 class Rule {
   constructor (selector, props, rank) {
@@ -61,10 +11,10 @@ class Rule {
     this.mixins = props.mixins
   }
   getKey () { return this.selector.getName() }
-  getSelector () { return this.selector.getValue() }
+  getSelector () { return this.selector.toString() }
   getRank () { return this.rank }
-  getOrder () { return this.selector.getOrder() }
-  matchContext (name, context) { return this.selector.matchContext(name, context) }
+  getOrder () { return this.selector.getSpecificity() }
+  matchContext (node) { return this.selector.matchContext(node) }
 }
 
 function ruleComparator (r1, r2) {
@@ -114,20 +64,6 @@ function shallowClone (props) {
     }
   }
   return ret
-}
-
-function parseContext (context) {
-  const spaceIdx = context.lastIndexOf(' ')
-  if (spaceIdx === -1) {
-    return makeRuleCtx(context, undefined)
-  }
-  const name = context.slice(spaceIdx + 1)
-  const rest = context.slice(0, spaceIdx).split(' ')
-  return makeRuleCtx(name, rest)
-}
-
-function makeRuleCtx (name, rest) {
-  return { name, rest }
 }
 
 /**
@@ -182,37 +118,26 @@ class Stylesheet {
     this.rules[key].sort(ruleComparator)
   }
   getProps (node) {
-    const context = node.path
     const ownProps = node.props
-    const variants = node.variant
     const props = shallowClone(ownProps)
 
-    const ctx = parseContext(context)
     const rules = []
-    if (variants !== undefined) {
-      if (Array.isArray(variants)) {
-        for (let i = 0; i < variants.length; ++i) {
-          const variant = variants[i]
-          this.collectRules(rules, makeRuleCtx(ctx.name + '.' + variant, ctx.rest))
-        }
-      } else {
-        this.collectRules(rules, makeRuleCtx(ctx.name + '.' + variants, ctx.rest))
-      }
-    }
-    this.collectRules(rules, ctx)
+    this.collectRules(rules, node)
     mergeRules(props, rules)
     return props
   }
-  collectRules (target, ctx) {
-    if (this.rules[ctx.name] !== undefined) {
-      const rules = this.rules[ctx.name]
+  collectRules (target, node) {
+    if (this.rules[node.getName()] !== undefined) {
+      const rules = this.rules[node.getName()]
       for (let i in rules) {
         const rule = rules[i]
-        if (rule.matchContext(ctx.name, ctx.rest)) {
+        if (rule.matchContext(node)) {
           target.push(rule)
           if (rule.mixins !== undefined) {
             for (let j = 0; j < rule.mixins.length; ++j) {
-              this.collectRules(target, makeRuleCtx(rule.mixins[j], ctx.rest))
+              // TODO: this inoptimal
+              const mixNode = new Node(rule.mixins[j], undefined, node.getParent(), node.getStyleSheet())
+              this.collectRules(target, mixNode)
             }
           }
         }
