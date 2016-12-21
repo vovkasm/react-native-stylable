@@ -2,6 +2,7 @@
 import Benchmark from 'benchmark'
 
 import Stylesheet from '../src/stylesheet'
+import Node from '../src/node'
 
 const s = new Stylesheet()
 s.addRules({
@@ -84,10 +85,16 @@ s.addDefaultRules({
   'Rule7 Text': {style: {flex: 1}}
 })
 
+const appNode = new Node('App', {}, undefined, s)
+const appViewNode = new Node('AppView', {}, appNode, s)
+const elemNode = new Node('Elem', {}, appViewNode, s)
+const itemNode = new Node('Item', {}, elemNode, s)
+const textNode = new Node('Text', {prop1: 1}, itemNode, s)
+
 const suite = new Benchmark.Suite()
 let props
 suite.add('new theme & props', function () {
-  props = s.getProps('App AppView Elem Item Text', {prop1: 1})
+  props = s.getProps(textNode)
   if (props.style.fontSize !== 12) {
     throw new Error('fontSize != 12')
   }
