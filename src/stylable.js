@@ -3,16 +3,18 @@ import hoistStatics from 'hoist-non-react-statics'
 
 import { Signal } from './mini-signals'
 
-class Path {
-  constructor (name, variant, parent) {
+class Node {
+  constructor (name, variant, parent, styleSheet) {
     this.name = name
     this.variant = variant
     this.parent = parent
+    this.styleSheet = styleSheet
     this.changed = new Signal()
     this.path = undefined
     this.fullPath = undefined
     this.resolvePath()
   }
+  getStyleSheet () { return this.styleSheet }
   setVariant (variant) {
     this.variant = variant
     this.resolvePath()
@@ -61,8 +63,7 @@ export default function stylable (name) {
 
       constructor (props, ctx) {
         super(props, ctx)
-        this.styleSheet = ctx.styleSheet
-        this.path = new Path(name, props.variant, ctx.styleSheetPath)
+        this.path = new Node(name, props.variant, ctx.styleSheetPath, ctx.styleSheet)
         this.parentSubscription = undefined
         this.state = { childProps: this.getChildProps(props) }
       }
@@ -94,7 +95,7 @@ export default function stylable (name) {
       }
 
       getChildProps (props) {
-        const childProps = this.styleSheet.getProps(this.path.path, props, props.variant)
+        const childProps = this.path.getStyleSheet().getProps(this.path.path, props, props.variant)
         delete childProps.variant
         return childProps
       }
