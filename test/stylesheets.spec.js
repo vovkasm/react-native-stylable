@@ -209,7 +209,7 @@ describe('Stylesheet', function () {
         style: {fontSize: 10}
       })
     })
-    it.skip('follow parent variants', function () {
+    it('follow parent variants', function () {
       expect(nodeFromPath(s, 'Button.active Text').childProps).to.be.deep.equal({
         style: {color: 'blue', fontWeight: 'bold'}
       })
