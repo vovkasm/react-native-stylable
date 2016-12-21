@@ -1,6 +1,6 @@
 {
   "name": "react-native-stylable",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Cascading styles for ReactNative",
   "main": "src/index.js",
   "scripts": {
