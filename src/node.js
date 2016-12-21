@@ -5,7 +5,7 @@ export default class Node {
     this.name = name
     this.props = props
     this.childProps = undefined
-    this.variant = props.variant
+    this.variant = props && props.variant
     this.parent = parent
     this.styleSheet = styleSheet
     this.changed = new Signal()
@@ -51,7 +51,7 @@ export default class Node {
     if (needNotify) this.changed.dispatch()
   }
   resolveChildProps () {
-    const childProps = this.styleSheet.getProps(this.path, this.props, this.variant)
+    const childProps = this.styleSheet.getProps(this)
     delete childProps.variant
     this.childProps = childProps
   }

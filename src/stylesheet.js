@@ -181,7 +181,10 @@ class Stylesheet {
     }
     this.rules[key].sort(ruleComparator)
   }
-  getProps (context, ownProps, variants) {
+  getProps (node) {
+    const context = node.path
+    const ownProps = node.props
+    const variants = node.variant
     const props = shallowClone(ownProps)
 
     const ctx = parseContext(context)
