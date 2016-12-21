@@ -202,15 +202,15 @@ describe('Stylesheet', function () {
       })
     })
     it('follow variants', function () {
-      expect(nodeFromPath(s, 'App Header', {variant: 'active'}).childProps).to.be.deep.equal({
+      expect(nodeFromPath(s, 'App Header', {variant: 'active'}).getChildProps()).to.be.deep.equal({
         style: {fontSize: 10, fontWeight: 'bold'}
       })
-      expect(nodeFromPath(s, 'App Header', {}).childProps).to.be.deep.equal({
+      expect(nodeFromPath(s, 'App Header', {}).getChildProps()).to.be.deep.equal({
         style: {fontSize: 10}
       })
     })
     it('follow parent variants', function () {
-      expect(nodeFromPath(s, 'Button.active Text').childProps).to.be.deep.equal({
+      expect(nodeFromPath(s, 'Button.active Text').getChildProps()).to.be.deep.equal({
         style: {color: 'blue', fontWeight: 'bold'}
       })
     })

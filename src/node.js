@@ -11,9 +11,11 @@ export default class Node {
     this.changed = new Signal()
     this.parentSubscription = undefined
     this.changeCb = undefined
-    this.update()
   }
-  getChildProps () { return this.childProps }
+  getChildProps () {
+    this.resolveChildProps()
+    return this.childProps
+  }
   getName () { return this.name }
   getParent () { return this.parent }
   getStyleSheet () { return this.styleSheet }
