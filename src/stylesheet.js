@@ -41,13 +41,15 @@ class SimpleSelector {
 }
 
 function parseSelector (value) {
-  let s
   if (value.indexOf(' ') === -1) {
-    s = new SimpleSelector(value)
+    return parseSimpleSelector(value)
   } else {
-    s = new Selector(value)
+    return new Selector(value)
   }
-  return s
+}
+
+function parseSimpleSelector (value) {
+  return new SimpleSelector(value)
 }
 
 class Rule {
