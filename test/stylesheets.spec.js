@@ -112,6 +112,26 @@ describe('Stylesheet', function () {
       expect(s.getProps(nodeFromPath(s, 'Other App Other View'))).to.be.deep.equal({d: 2, p1: 11, p2: 2, p3: 3})
     })
   })
+  describe('Rules priority', function () {
+    beforeEach(function () {
+      s.addDefaultRules({
+        'Text': {style: {fontSize: 1}},
+        'Button Text': {style: {fontSize: 2}},
+        'Title Text': {style: {fontSize: 3}},
+        'App Button Text': {style: {fontSize: 4}},
+        'App Title Text': {style: {fontSize: 5}},
+        'App Button.active Text': {style: {fontSize: 6}}
+      })
+    })
+    it('works', function () {
+      expect(nodeFromPath(s, 'App Other Text').getChildProps()).to.be.deep.equal({style: {fontSize: 1}})
+      expect(nodeFromPath(s, 'Other Button Text').getChildProps()).to.be.deep.equal({style: {fontSize: 2}})
+      expect(nodeFromPath(s, 'Other1 Other2 Title Other3 Other4 Text').getChildProps()).to.be.deep.equal({style: {fontSize: 3}})
+      expect(nodeFromPath(s, 'App Button Text').getChildProps()).to.be.deep.equal({style: {fontSize: 4}})
+      expect(nodeFromPath(s, 'App Title Text').getChildProps()).to.be.deep.equal({style: {fontSize: 5}})
+      expect(nodeFromPath(s, 'App Button.active Text').getChildProps()).to.be.deep.equal({style: {fontSize: 6}})
+    })
+  })
   describe('Style property', function () {
     beforeEach(function () {
       s.addDefaultRules({
