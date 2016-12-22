@@ -40,6 +40,12 @@ Button.propTypes = {
   title: PropTypes.string
 }
 
+const ContainerView = stylable('Container')(View)
+const Container = function Container (props) {
+  return <ContainerView>{props.content}</ContainerView>
+}
+Container.propTypes = { content: PropTypes.node }
+
 describe('Stylable', function () {
   let s
   beforeEach(function () {
@@ -115,6 +121,23 @@ describe('Stylable', function () {
       expect(el.find('.TitleText').props().style).to.deep.equal({fontSize: 10, color: 'black'})
       el.setProps({active: true})
       expect(el.find('.TitleText').props().style).to.deep.equal({fontSize: 10, color: 'red'})
+    })
+  })
+  describe('out of tree', function () {
+    beforeEach(function () {
+      s.addDefaultRules({
+        'Title': {style: {fontSize: 1}},
+        'Container Title': {style: {fontSize: 2}}
+      })
+    })
+    it('determine tree position', function () {
+      const Root = function Root (props) {
+        const title = <Title text='title1' />
+        return <StyleProvider styleSheet={s}><Container content={title} /></StyleProvider>
+      }
+
+      const el = mount(<Root />)
+      expect(el.find('.TitleText').props().style).to.deep.equal({fontSize: 2})
     })
   })
 })
