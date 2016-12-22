@@ -1,7 +1,11 @@
 process.env.NODE_ENV = 'test'
 global.__DEV__ = true
 
-require('babel-register')()
+const babelConfig = {}
+if (process.env.ISTANBUL_COVERAGE === 'yes') {
+  babelConfig.plugins = ['istanbul']
+}
+require('babel-register')(babelConfig)
 
 require('react-native-mock/mock')
 

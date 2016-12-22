@@ -4,14 +4,11 @@
   "description": "Cascading styles for ReactNative",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --require test/setup test/*.spec.js",
+    "test": "mocha -r test/setup test/*.spec.js",
     "bench": "node -r babel-register bench/bench.js",
-    "cover": "cross-env NODE_ENV=test nyc mocha -r test/setup test/*.spec.js"
+    "cover": "cross-env ISTANBUL_COVERAGE=yes nyc mocha -r test/setup  test/*.spec.js"
   },
   "nyc": {
-    "require": [
-      "babel-register"
-    ],
     "reporter": [
       "text",
       "html"
