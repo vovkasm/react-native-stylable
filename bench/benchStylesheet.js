@@ -1,6 +1,4 @@
 
-import Benchmark from 'benchmark'
-
 import Stylesheet from '../src/stylesheet'
 import Node from '../src/node'
 
@@ -91,21 +89,11 @@ const elemNode = new Node('Elem', {}, appViewNode, s)
 const itemNode = new Node('Item', {}, elemNode, s)
 const textNode = new Node('Text', {prop1: 1}, itemNode, s)
 
-const suite = new Benchmark.Suite()
-let props
-suite.add('new theme & props', function () {
-  props = s.getProps(textNode)
+function benchStylesheet () {
+  const props = s.getProps(textNode)
   if (props.style.fontSize !== 12) {
     throw new Error('fontSize != 12')
   }
-})
-suite.on('cycle', function (e) {
-  console.log(String(e.target))
-  if (e.target.error) {
-    console.log('Error: ', e.target.error)
-  }
-})
-suite.on('complete', function () {
-  console.log('Done')
-})
-suite.run()
+}
+
+export default benchStylesheet
