@@ -29,6 +29,7 @@ export default function stylable (name) {
         super(props, ctx)
         this.node = new Node(name, props, ctx.styleNode, ctx.styleSheet)
         this.state = { childProps: this.node.getChildProps() }
+        this._wrapped = undefined
       }
 
       componentWillReceiveProps (nextProps) {
@@ -48,11 +49,23 @@ export default function stylable (name) {
       }
 
       render () {
-        return React.createElement(WrappedComponent, this.state.childProps)
+        return React.createElement(WrappedComponent, {
+          ...this.state.childProps,
+          ref: this._setWrappedRef
+        })
       }
+
+      _setWrappedRef = (el) => { this._wrapped = el }
 
       getChildContext () {
         return { styleNode: this.node }
+      }
+    }
+
+    const proto = WrappedComponent.prototype
+    if (typeof proto.setNativeProps === 'function') {
+      Stylable.prototype.setNativeProps = function (props) {
+        this._wrapped && this._wrapped.setNativeProps(props)
       }
     }
 

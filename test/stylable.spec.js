@@ -140,4 +140,39 @@ describe('Stylable', function () {
       expect(el.find('.TitleText').props().style).to.deep.equal({fontSize: 2})
     })
   })
+  describe('setNativeProps', function () {
+    it('pass down', function () {
+      let ref1
+      let ref2
+      let cnt = 0
+      let lastNativeProps
+      class ViewWithNativePropsComp extends React.Component {
+        render () {
+          return <div {...this.props} />
+        }
+        setNativeProps (props) {
+          cnt++
+          lastNativeProps = props
+        }
+      }
+      const ViewWithNativeProps = stylable('ViewWithNativeProps')(ViewWithNativePropsComp)
+      const Root = function Root (props) {
+        return <StyleProvider styleSheet={s}>
+          <View>
+            <ViewWithNativeProps ref={el => { ref1 = el }} />
+            <Text ref={el => { ref2 = el }}>hi</Text>
+          </View>
+        </StyleProvider>
+      }
+
+      mount(<Root />)
+
+      expect(ref1).to.respondTo('setNativeProps')
+      ref1.setNativeProps({abc: 1})
+      expect(cnt).to.equal(1)
+      expect(lastNativeProps).to.deep.equal({abc: 1})
+
+      expect(ref2).to.not.respondTo('setNativeProps')
+    })
+  })
 })
