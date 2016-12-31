@@ -1,5 +1,8 @@
 # react-native-stylable
 
+  [![Build Status](https://travis-ci.org/vovkasm/react-native-stylable.svg?branch=master)](https://travis-ci.org/vovkasm/react-native-stylable)
+  [![Coverage Status](https://coveralls.io/repos/github/vovkasm/react-native-stylable/badge.svg?branch=master)](https://coveralls.io/github/vovkasm/react-native-stylable?branch=master)
+
 Cascading styles for ReactNative.
 A components for easy styling you React Native application.
 
