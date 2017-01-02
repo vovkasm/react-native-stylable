@@ -1,84 +1,39 @@
-/* eslint-env mocha */
-
-import { expect } from 'chai'
+import test from 'tape'
 
 import { parseSelector } from '../src/selectors'
 
-describe('Selectors', function () {
-  describe('simple', function () {
-    let s
-    describe('El', function () {
-      beforeEach(function () {
-        s = parseSelector('El')
-      })
-      it('parsed correctly', function () {
-        expect(s.getName()).to.equal('El')
-      })
-      it('specificity', function () {
-        expect(s.getSpecificity()).to.equal(1)
-      })
-      it('stringify', function () {
-        expect(s.toString()).to.equal('El')
-      })
-    })
-    describe('El.one', function () {
-      beforeEach(function () {
-        s = parseSelector('El.one')
-      })
-      it('parsed correctly', function () {
-        expect(s.getName()).to.equal('El')
-      })
-      it('specificity', function () {
-        expect(s.getSpecificity()).to.equal((1 << 8) + 1)
-      })
-      it('stringify', function () {
-        expect(s.toString()).to.equal('El.one')
-      })
-    })
-    describe('El.one.two', function () {
-      beforeEach(function () {
-        s = parseSelector('El.one.two')
-      })
-      it('parsed correctly', function () {
-        expect(s.getName()).to.equal('El')
-      })
-      it('specificity', function () {
-        expect(s.getSpecificity()).to.equal((2 << 8) + 1)
-      })
-      it('stringify', function () {
-        expect(s.toString()).to.equal('El.one.two')
-      })
-    })
-  })
-  describe('compaund', function () {
-    let s
-    describe('App View Text', function () {
-      beforeEach(function () {
-        s = parseSelector('App View Text')
-      })
-      it('parsed correctly', function () {
-        expect(s.getName()).to.equal('Text')
-      })
-      it('specificity', function () {
-        expect(s.getSpecificity()).to.equal(3)
-      })
-      it('stringify', function () {
-        expect(s.toString()).to.equal('App View Text')
-      })
-    })
-    describe('App View.one Text', function () {
-      beforeEach(function () {
-        s = parseSelector('App View.one Text')
-      })
-      it('parsed correctly', function () {
-        expect(s.getName()).to.equal('Text')
-      })
-      it('specificity', function () {
-        expect(s.getSpecificity()).to.equal((1 << 8) + 3)
-      })
-      it('stringify', function () {
-        expect(s.toString()).to.equal('App View.one Text')
-      })
-    })
-  })
+test('Selector: El', function (t) {
+  const s = parseSelector('El')
+  t.is(s.getName(), 'El')
+  t.is(s.getSpecificity(), 1)
+  t.is(s.toString(), 'El')
+  t.end()
+})
+test('Selector: El.one', function (t) {
+  const s = parseSelector('El.one')
+  t.is(s.getName(), 'El')
+  t.is(s.getSpecificity(), (1 << 8) + 1)
+  t.is(s.toString(), 'El.one')
+  t.end()
+})
+test('Selector: El.one.two', function (t) {
+  const s = parseSelector('El.one.two')
+  t.is(s.getName(), 'El')
+  t.is(s.getSpecificity(), (2 << 8) + 1)
+  t.is(s.toString(), 'El.one.two')
+  t.end()
+})
+test('Selector: App View Text', function (t) {
+  const s = parseSelector('App View Text')
+  t.is(s.getName(), 'Text')
+  t.is(s.getSpecificity(), 3)
+  t.is(s.toString(), 'App View Text')
+  t.end()
+})
+test('Selector: App View.one Text', function (t) {
+  const s = parseSelector('App View.one Text')
+  t.is(s.getName(), 'Text')
+  t.is(s.getSpecificity(), (1 << 8) + 3)
+  t.is(s.toString(), 'App View.one Text')
+  t.end()
 })

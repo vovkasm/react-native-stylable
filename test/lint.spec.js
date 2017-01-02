@@ -1,3 +1,3 @@
-import lint from 'mocha-eslint'
+import test from 'tape'
 
-lint([ 'src/*.js', 'tests/*.js' ])
+test('eslint', require('tape-eslint')())
