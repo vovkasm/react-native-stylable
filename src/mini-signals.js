@@ -1,7 +1,6 @@
 // Initially from https://github.com/Hypercubed/mini-signals but specialized for owr needs
 
 export class SignalBinding {
-
   constructor (fn, thisArg) {
     this._fn = fn
     this._thisArg = thisArg
@@ -13,7 +12,6 @@ export class SignalBinding {
     this._owner.detach(this)
     return true
   }
-
 }
 
 function _addSignalBinding (self, node) {
@@ -32,7 +30,6 @@ function _addSignalBinding (self, node) {
 }
 
 export class Signal {
-
   constructor () {
     this._head = this._tail = undefined
   }
