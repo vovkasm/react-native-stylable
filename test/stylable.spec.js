@@ -1,6 +1,7 @@
 import test from 'tape'
 import { mount } from 'enzyme'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 import { StyleProvider, Stylesheet, stylable } from '../src'
 

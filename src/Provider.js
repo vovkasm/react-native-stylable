@@ -1,4 +1,5 @@
-import React, { Children, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { Children } from 'react'
 
 /**
  * Provides style sheet to its childs

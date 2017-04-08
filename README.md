@@ -48,7 +48,8 @@ export default s
 
 ```javascript
 // some component, Item.js for ex
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Image, Text, View } from 'react-native'
 import { stylable } from 'react-native-stylable'
 
