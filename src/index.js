@@ -1,4 +1,13 @@
-export { default as StyleProvider } from './Provider'
-export { Button, Text, View } from './components'
-export { default as Stylesheet } from './stylesheet'
-export { default as stylable } from './stylable'
+import StyleProvider from './Provider'
+import { Button, Text, View } from './components'
+import Stylesheet from './stylesheet'
+import stylable from './stylable'
+
+module.exports = {
+  StyleProvider,
+  Button,
+  Text,
+  View,
+  Stylesheet,
+  stylable
+}
