@@ -1,5 +1,4 @@
 module.exports = {
-  env: { browser: true },
   extends: [ 'standard', 'standard-react' ],
   plugins: [ 'import' ],
   parser: 'babel-eslint',

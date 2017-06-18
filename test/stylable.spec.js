@@ -1,25 +1,11 @@
-import test from 'tape'
-import { mount } from 'enzyme'
+/* eslint-env jest */
+
 import PropTypes from 'prop-types'
 import React from 'react'
+import { View, Text } from 'react-native'
+import Renderer from 'react-test-renderer'
 
 import { StyleProvider, Stylesheet, stylable } from '../src'
-
-class View extends React.Component {
-  render () {
-    const { children, ...other } = this.props
-    return <div {...other}>{children}</div>
-  }
-}
-View.propTypes = { children: PropTypes.node }
-
-class Text extends React.Component {
-  render () {
-    const { children, ...other } = this.props
-    return <span {...other}>{children}</span>
-  }
-}
-Text.propTypes = { children: PropTypes.node }
 
 const TitleText = stylable('Title')(Text)
 const DescrText = stylable('Descr')(Text)
@@ -45,7 +31,7 @@ const Container = function Container (props) {
 }
 Container.propTypes = { content: PropTypes.node }
 
-test('Stylable. Complete example', function (t) {
+describe('Stylable. Complete example', function () {
   const Page = stylable('Page')(function PurePage (props) {
     return <View><Title text='Sample' /><Descr text='Hellow world!' /></View>
   })
@@ -57,32 +43,32 @@ test('Stylable. Complete example', function (t) {
     'Descr': {mixins: ['baseText'], style: {fontStyle: 'italic'}},
     'Intro baseText': {style: {fontSize: 16}}
   })
-  t.test('Page renders with right styles', function (t) {
-    const app = mount(<StyleProvider styleSheet={s}><Page /></StyleProvider>)
-
-    t.deepEqual(app.find('.TitleText').props().style, {fontSize: 10, color: 'black'})
-    t.deepEqual(app.find('.DescrText').props().style, {fontSize: 10, fontStyle: 'italic', color: 'black'})
-    t.end()
+  test('Page renders with right styles', function () {
+    const app = Renderer.create(<StyleProvider styleSheet={s}><Page /></StyleProvider>)
+    expect(app.toJSON()).toHaveProperty('children.0.props.style', {fontSize: 10, color: 'black'})
+    expect(app.toJSON()).toHaveProperty('children.1.props.style', {fontSize: 10, fontStyle: 'italic', color: 'black'})
   })
-  t.test('Page inside Intro renders with right styles', function (t) {
-    const app = mount(<StyleProvider styleSheet={s}><Intro><Page /></Intro></StyleProvider>)
-
-    t.deepEqual(app.find('.TitleText').props().style, {fontSize: 16, color: 'black'})
-    t.deepEqual(app.find('.DescrText').props().style, {fontSize: 16, fontStyle: 'italic', color: 'black'})
-    t.end()
+  test('Page inside Intro renders with right styles', function () {
+    const app = Renderer.create(<StyleProvider styleSheet={s}><Intro><Page /></Intro></StyleProvider>)
+    expect(app.toJSON()).toHaveProperty('children.0.children.0.props.style', {fontSize: 16, color: 'black'})
+    expect(app.toJSON()).toHaveProperty('children.0.children.1.props.style', {fontSize: 16, fontStyle: 'italic', color: 'black'})
   })
-  t.end()
 })
 
-test('setNativeProps', function (t) {
+test('setNativeProps', function () {
   const s = new Stylesheet()
   let ref1
   let ref2
   let cnt = 0
   let lastNativeProps
+  class NoNativeProps extends React.Component {
+    render () {
+      return <View />
+    }
+  }
   class ViewWithNativePropsComp extends React.Component {
     render () {
-      return <div {...this.props} />
+      return <View />
     }
     setNativeProps (props) {
       cnt++
@@ -94,23 +80,22 @@ test('setNativeProps', function (t) {
     return <StyleProvider styleSheet={s}>
       <View>
         <ViewWithNativeProps ref={el => { ref1 = el }} />
-        <Text ref={el => { ref2 = el }}>hi</Text>
+        <NoNativeProps ref={el => { ref2 = el }} />
       </View>
     </StyleProvider>
   }
 
-  mount(<Root />)
+  Renderer.create(<Root />)
 
-  t.is(typeof ref1['setNativeProps'], 'function', 'ref1 responds to setNativeProps')
+  expect(ref1['setNativeProps']).toBeInstanceOf(Function)
   ref1.setNativeProps({abc: 1})
-  t.is(cnt, 1, 'setNativeProps was actually called')
-  t.deepEqual(lastNativeProps, {abc: 1}, 'with right argument')
+  expect(cnt).toBe(1)
+  expect(lastNativeProps).toEqual({abc: 1})
 
-  t.false(typeof ref2['setNativeProps'] === 'function', 'ref2 do not responds to setNativeProps')
-  t.end()
+  expect(ref2['setNativeProps']).not.toBeInstanceOf(Function)
 })
 
-test('variants', function (t) {
+test('variants', function () {
   const s = new Stylesheet()
   s.addDefaultRules({
     'baseText': {style: {fontSize: 10, color: 'black'}},
@@ -118,19 +103,19 @@ test('variants', function (t) {
     'Title.selected': {style: {color: 'green'}}
   })
 
-  const Root = function Root (props) {
+  const Root = (props) => {
     return <StyleProvider styleSheet={s}><TitleText variant={props.variant}>Hello</TitleText></StyleProvider>
   }
   Root.propTypes = { variant: PropTypes.any }
 
-  const el = mount(<Root variant='selected' />)
-  t.deepEqual(el.find('span').props().style, {fontSize: 10, color: 'green'})
-  el.setProps({variant: undefined})
-  t.deepEqual(el.find('span').props().style, {fontSize: 10, color: 'black'})
-  t.end()
+  const app = Renderer.create(<Root variant='selected' />)
+
+  expect(app.toJSON()).toHaveProperty('props.style', {fontSize: 10, color: 'green'})
+  app.update(<Root variant={undefined} />)
+  expect(app.toJSON()).toHaveProperty('props.style', {fontSize: 10, color: 'black'})
 })
 
-test('scoped variants', function (t) {
+test('scoped variants', function () {
   const s = new Stylesheet()
   s.addDefaultRules({
     'baseText': {style: {fontSize: 10, color: 'black'}},
@@ -142,14 +127,13 @@ test('scoped variants', function (t) {
   }
   Root.propTypes = { active: PropTypes.bool }
 
-  const el = mount(<Root />)
-  t.deepEqual(el.find('.TitleText').props().style, {fontSize: 10, color: 'black'})
-  el.setProps({active: true})
-  t.deepEqual(el.find('.TitleText').props().style, {fontSize: 10, color: 'red'})
-  t.end()
+  const app = Renderer.create(<Root />)
+  expect(app.toJSON()).toHaveProperty('children.0.children.0.props.style', {fontSize: 10, color: 'black'})
+  app.update(<Root active />)
+  expect(app.toJSON()).toHaveProperty('children.0.children.0.props.style', {fontSize: 10, color: 'red'})
 })
 
-test('Out of tree comps', function (t) {
+test('Out of tree comps', function () {
   const s = new Stylesheet()
   s.addDefaultRules({
     'Title': {style: {fontSize: 1}},
@@ -160,7 +144,6 @@ test('Out of tree comps', function (t) {
     return <StyleProvider styleSheet={s}><Container content={title} /></StyleProvider>
   }
 
-  const el = mount(<Root />)
-  t.deepEqual(el.find('.TitleText').props().style, {fontSize: 2})
-  t.end()
+  const app = Renderer.create(<Root />)
+  expect(app.toJSON()).toHaveProperty('children.0.props.style', {fontSize: 2})
 })

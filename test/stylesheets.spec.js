@@ -1,4 +1,4 @@
-import test from 'tape'
+/* eslint-env jest */
 
 import Stylesheet from '../src/stylesheet'
 import Node from '../src/node'
@@ -40,40 +40,43 @@ function nodeFromPath (styleSheet, fullPath, ownProps) {
   return node
 }
 
-test('Stylesheet with simple rules', function (t) {
+function getPropsForNode (s, fullPath, ownProps) {
+  const n = nodeFromPath(s, fullPath, ownProps)
+  return s.getProps(n)
+}
+
+test('Stylesheet with simple rules', function () {
   const s = new Stylesheet()
   s.addRule('View', {props: {prop1: 1, prop2: 2}})
-  t.deepEqual(s.getProps(nodeFromPath(s, 'View')), { prop1: 1, prop2: 2 }, 'getProps correct')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'View')), { prop1: 1, prop2: 2 }, 'getProps cached result')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'Text')), {}, 'getProps not in style sheet')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'View', { prop1: 11, prop3: 31 })), {
+  expect(getPropsForNode(s, 'View')).toEqual({prop1: 1, prop2: 2})
+  expect(getPropsForNode(s, 'View')).toEqual({prop1: 1, prop2: 2})
+  expect(getPropsForNode(s, 'Text')).toEqual({})
+  expect(getPropsForNode(s, 'View', { prop1: 11, prop3: 31 })).toEqual({
     prop1: 11,
     prop2: 2,
     prop3: 31
-  }, 'with own props')
-  t.end()
+  })
 })
 
-test('Stylesheet with inherited rules', function (t) {
+test('Stylesheet with inherited rules', function () {
   const s = new Stylesheet()
   s.addRule('View', {props: {p1: 1, p2: 2}})
   s.addRule('App View', {props: {p1: 11, p3: 3}})
-  t.deepEqual(s.getProps(nodeFromPath(s, 'View')), {p1: 1, p2: 2}, 'getProps context:[View]')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'Other View')), {p1: 1, p2: 2}, 'getProps context:[Other View]')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App View')), {p1: 11, p2: 2, p3: 3}, 'getProps context:[App View]')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'Other App Other View')), {p1: 11, p2: 2, p3: 3}, 'getProps context:[Other App Other View]')
-  t.end()
+
+  expect(s.getProps(nodeFromPath(s, 'View'))).toEqual({p1: 1, p2: 2})
+  expect(s.getProps(nodeFromPath(s, 'Other View'))).toEqual({p1: 1, p2: 2})
+  expect(s.getProps(nodeFromPath(s, 'App View'))).toEqual({p1: 11, p2: 2, p3: 3})
+  expect(s.getProps(nodeFromPath(s, 'Other App Other View'))).toEqual({p1: 11, p2: 2, p3: 3})
 })
 
-test('Default rules', function (t) {
+test('Default rules', function () {
   const s = new Stylesheet()
   s.addDefaultRule('App View', {props: {p1: 1, p2: 1}})
   s.addRule('View', {props: {p2: 2, p3: 2}})
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App View')), {p1: 1, p2: 2, p3: 2}, 'getProps context:[App View]')
-  t.end()
+  expect(getPropsForNode(s, 'App View')).toEqual({p1: 1, p2: 2, p3: 2})
 })
 
-test('Overlapping rules', function (t) {
+test('Overlapping rules', function () {
   const s = new Stylesheet()
   s.addDefaultRules({
     'View': {props: {d: 1}},
@@ -83,12 +86,11 @@ test('Overlapping rules', function (t) {
     'View': {props: {p1: 1, p2: 2}},
     'App View': {props: {p1: 11, p3: 3}}
   })
-  t.deepEqual(s.getProps(nodeFromPath(s, 'Other Other2 View')), {d: 1, p1: 1, p2: 2}, 'getProps context:[Other Other2 View]')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'Other App Other View')), {d: 2, p1: 11, p2: 2, p3: 3}, 'getProps context:[Other App Other View]')
-  t.end()
+  expect(s.getProps(nodeFromPath(s, 'Other Other2 View'))).toEqual({d: 1, p1: 1, p2: 2})
+  expect(s.getProps(nodeFromPath(s, 'Other App Other View'))).toEqual({d: 2, p1: 11, p2: 2, p3: 3})
 })
 
-test('Rules priority', function (t) {
+test('Rules priority', function () {
   const s = new Stylesheet()
   s.addDefaultRules({
     'Text': {style: {fontSize: 1}},
@@ -98,40 +100,38 @@ test('Rules priority', function (t) {
     'App Title Text': {style: {fontSize: 5}},
     'App Button.active Text': {style: {fontSize: 6}}
   })
-  t.deepEqual(nodeFromPath(s, 'App Other Text').getChildProps(), {style: {fontSize: 1}})
-  t.deepEqual(nodeFromPath(s, 'Other Button Text').getChildProps(), {style: {fontSize: 2}})
-  t.deepEqual(nodeFromPath(s, 'Other1 Other2 Title Other3 Other4 Text').getChildProps(), {style: {fontSize: 3}})
-  t.deepEqual(nodeFromPath(s, 'App Button Text').getChildProps(), {style: {fontSize: 4}})
-  t.deepEqual(nodeFromPath(s, 'App Title Text').getChildProps(), {style: {fontSize: 5}})
-  t.deepEqual(nodeFromPath(s, 'App Button.active Text').getChildProps(), {style: {fontSize: 6}})
-  t.end()
+  expect(nodeFromPath(s, 'App Other Text').getChildProps()).toEqual({style: {fontSize: 1}})
+  expect(nodeFromPath(s, 'Other Button Text').getChildProps()).toEqual({style: {fontSize: 2}})
+  expect(nodeFromPath(s, 'Other1 Other2 Title Other3 Other4 Text').getChildProps()).toEqual({style: {fontSize: 3}})
+  expect(nodeFromPath(s, 'App Button Text').getChildProps()).toEqual({style: {fontSize: 4}})
+  expect(nodeFromPath(s, 'App Title Text').getChildProps()).toEqual({style: {fontSize: 5}})
+  expect(nodeFromPath(s, 'App Button.active Text').getChildProps()).toEqual({style: {fontSize: 6}})
 })
 
-test('Style property', function (t) {
+test('Style property', function () {
   const s = new Stylesheet()
   s.addDefaultRules({
     'Text': {style: {fontSize: 8, color: 'black'}},
     'App Text': {style: {fontSize: 10}}
   })
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Other Text')), {
+  expect(s.getProps(nodeFromPath(s, 'App Other Text')), {
     style: {
       fontSize: 10,
       color: 'black'
     }
   }, 'get correct fontSize')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Other Text', {style: {color: 'green'}})), {
+  expect(s.getProps(nodeFromPath(s, 'App Other Text', {style: {color: 'green'}}))).toEqual({
     style: [{ fontSize: 10, color: 'black' }, { color: 'green' }]
-  }, 'own style is object')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Other Text', {style: 2})), {
+  })
+  expect(s.getProps(nodeFromPath(s, 'App Other Text', {style: 2}))).toEqual({
     style: [{ fontSize: 10, color: 'black' }, 2]
-  }, 'own style is number')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Other Text', {style: [2]})), {
+  })
+  expect(s.getProps(nodeFromPath(s, 'App Other Text', {style: [2]}))).toEqual({
     style: [{ fontSize: 10, color: 'black' }, 2]
-  }, 'own style is array')
-  t.end()
+  })
 })
 
-test('mixins', function (t) {
+test('mixins', function () {
   const s = new Stylesheet()
   s.addRules({
     'bold': {mixins: ['defaultFont'], style: {fontWeight: 'bold'}},
@@ -142,23 +142,22 @@ test('mixins', function (t) {
   s.addDefaultRules({
     'Text': {mixins: ['defaultFont'], style: {horizontalMargin: 2}}
   })
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Text')), {
+  expect(s.getProps(nodeFromPath(s, 'App Text'))).toEqual({
     style: {
       fontSize: 10,
       fontFamily: 'Helvetica',
       horizontalMargin: 2
     }
-  }, 'get props from mixin')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Text2')), {
+  })
+  expect(s.getProps(nodeFromPath(s, 'App Text2'))).toEqual({
     style: { fontSize: 10, fontFamily: 'Helvetica', fontWeight: 'bold' }
-  }, 'mixins in mixins')
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Intro Text')), {
+  })
+  expect(s.getProps(nodeFromPath(s, 'App Intro Text'))).toEqual({
     style: { fontSize: 20, fontFamily: 'Helvetica', horizontalMargin: 2 }
-  }, 'in context')
-  t.end()
+  })
 })
 
-test('mixins. can update rules', function (t) {
+test('mixins. can update rules', function () {
   const s = new Stylesheet()
   s.addRules({
     'defaultFont': {style: {fontSize: 10, fontFamily: 'Helvetica'}},
@@ -167,19 +166,18 @@ test('mixins. can update rules', function (t) {
   s.addDefaultRules({
     'Text': {mixins: ['defaultFont'], style: {horizontalMargin: 2}}
   })
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Text')), {
+  expect(s.getProps(nodeFromPath(s, 'App Text'))).toEqual({
     style: { fontSize: 10, fontFamily: 'Helvetica', horizontalMargin: 2 }
   })
   s.addRules({
     'defaultFont': {style: {fontSize: 8}}
   })
-  t.deepEqual(s.getProps(nodeFromPath(s, 'App Text')), {
+  expect(s.getProps(nodeFromPath(s, 'App Text'))).toEqual({
     style: { fontSize: 8, horizontalMargin: 2 }
   })
-  t.end()
 })
 
-test('variants', function (t) {
+test('variants', function () {
   const s = new Stylesheet()
   s.addDefaultRules({
     'Header': {style: {fontSize: 10}},
@@ -189,14 +187,13 @@ test('variants', function (t) {
     'Button Text': {style: {color: 'blue'}},
     'Button.active Text': {style: {fontWeight: 'bold'}}
   })
-  t.deepEqual(nodeFromPath(s, 'App Header', {variant: 'active'}).getChildProps(), {
+  expect(nodeFromPath(s, 'App Header', {variant: 'active'}).getChildProps()).toEqual({
     style: {fontSize: 10, fontWeight: 'bold'}
-  }, 'with variant')
-  t.deepEqual(nodeFromPath(s, 'App Header', {}).getChildProps(), {
+  })
+  expect(nodeFromPath(s, 'App Header', {}).getChildProps()).toEqual({
     style: {fontSize: 10}
-  }, 'without variant')
-  t.deepEqual(nodeFromPath(s, 'Button.active Text').getChildProps(), {
+  })
+  expect(nodeFromPath(s, 'Button.active Text').getChildProps()).toEqual({
     style: {color: 'blue', fontWeight: 'bold'}
-  }, 'with parent variant')
-  t.end()
+  })
 })

@@ -1,0 +1,5 @@
+{
+  "preset": "react-native",
+  "collectCoverage": true,
+  "coverageReporters": ["lcov"]
+}
