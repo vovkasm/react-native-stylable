@@ -81,17 +81,17 @@ export class Signal {
     if (!(node instanceof SignalBinding)) {
       throw new Error('Signal#detach(): First arg must be a SignalBinding object.')
     }
-    if (node._owner !== this) return this  // todo: or error?
+    if (node._owner !== this) return this // todo: or error?
 
     if (node._prev) node._prev._next = node._next
     if (node._next) node._next._prev = node._prev
 
-    if (node === this._head) {  // first node
+    if (node === this._head) { // first node
       this._head = node._next
       if (node._next === null) {
         this._tail = null
       }
-    } else if (node === this._tail) {  // last node
+    } else if (node === this._tail) { // last node
       this._tail = node._prev
       this._tail._next = null
     }
