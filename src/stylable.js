@@ -19,9 +19,15 @@ function getDisplayName (comp) {
   return 'Component'
 }
 
+function isPureComponent (comp) {
+  const p = comp.prototype
+  return p.isPureReactComponent || !p.setState
+}
+
 export default function stylable (name) {
   return function wrapWithComponent (WrappedComponent) {
     const stylableDisplayName = `Stylable(${getDisplayName(WrappedComponent)})`
+    const pureComponent = isPureComponent(WrappedComponent)
 
     class Stylable extends React.Component {
       static displayName = stylableDisplayName
@@ -60,17 +66,20 @@ export default function stylable (name) {
         this.setState({ childProps: this.node.getChildProps() })
       }
 
-      render () {
-        return React.createElement(WrappedComponent, {
-          ...this.state.childProps,
-          ref: this._setWrappedRef
-        })
-      }
-
       _setWrappedRef = (el) => { this._wrapped = el }
 
       getChildContext () {
         return { styleNode: this.node }
+      }
+    }
+
+    if (pureComponent) {
+      Stylable.prototype.render = function render () {
+        return React.createElement(WrappedComponent, this.state.childProps)
+      }
+    } else {
+      Stylable.prototype.render = function render () {
+        return React.createElement(WrappedComponent, { ...this.state.childProps, ref: this._setWrappedRef })
       }
     }
 
