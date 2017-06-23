@@ -5,7 +5,18 @@ import hoistStatics from 'hoist-non-react-statics'
 import Node from './node'
 
 function getDisplayName (comp) {
-  return comp.displayName || comp.name || 'Component'
+  if (typeof comp.getName === 'function') {
+    return comp.getName()
+  }
+  if (typeof comp.tag === 'number') {
+    if (typeof comp.type === 'string') {
+      return comp.type
+    }
+    if (typeof comp.type === 'function') {
+      return comp.displayName || comp.name
+    }
+  }
+  return 'Component'
 }
 
 export default function stylable (name) {
