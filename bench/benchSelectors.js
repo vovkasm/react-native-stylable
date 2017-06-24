@@ -1,7 +1,7 @@
 
-import Stylesheet from '../src/stylesheet'
-import Node from '../src/node'
-import { parseSelector } from '../src/selectors'
+const Stylesheet = require('../dist/Stylesheet').default
+const Node = require('../dist/Node').default
+const { parseSelector } = require('../dist/selectors')
 
 const s = new Stylesheet()
 
@@ -20,7 +20,7 @@ function createBenchFunc (sel, node, expected) {
   }
 }
 
-export default [
+module.exports = [
   {
     name: 'selectors: simple match',
     fn: createBenchFunc(parseSelector('Text'), textNode, true)

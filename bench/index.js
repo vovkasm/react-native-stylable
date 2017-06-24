@@ -1,8 +1,8 @@
 
-import Benchmark from 'benchmark'
+const Benchmark = require('benchmark')
 
-import benchStylesheet from './benchStylesheet'
-import selectorsBenchmarks from './benchSelectors'
+const benchStylesheet = require('./benchStylesheet')
+const selectorsBenchmarks = require('./benchSelectors')
 
 const suite = new Benchmark.Suite()
 

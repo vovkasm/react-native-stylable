@@ -1,6 +1,6 @@
 
-import Stylesheet from '../src/stylesheet'
-import Node from '../src/node'
+const Stylesheet = require('../dist/Stylesheet').default
+const Node = require('../dist/Node').default
 
 const s = new Stylesheet()
 s.addRules({
@@ -96,4 +96,4 @@ function benchStylesheet () {
   }
 }
 
-export default benchStylesheet
+module.exports = benchStylesheet
