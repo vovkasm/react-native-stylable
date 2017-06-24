@@ -8,7 +8,8 @@
     "bench": "node bench/index.js",
     "build": "babel -d dist src",
     "test-ci": "jest --config jest-ci.config.json",
-    "test": "jest"
+    "test": "jest",
+    "release": "standard-version"
   },
   "jest": {
     "preset": "react-native"
