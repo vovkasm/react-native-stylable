@@ -61,7 +61,7 @@ test('setNativeProps', function () {
   let ref2
   let cnt = 0
   let lastNativeProps
-  class NoNativeProps extends React.Component {
+  class NoNativePropsComp extends React.Component {
     render () {
       return <View />
     }
@@ -76,23 +76,25 @@ test('setNativeProps', function () {
     }
   }
   const ViewWithNativeProps = stylable('ViewWithNativeProps')(ViewWithNativePropsComp)
+  const NoNativeProps = stylable('NoNativeProps')(NoNativePropsComp)
   const Root = function Root (props) {
     return <StyleProvider styleSheet={s}>
       <View>
         <ViewWithNativeProps ref={el => { ref1 = el }} />
         <NoNativeProps ref={el => { ref2 = el }} />
+        <ViewWithNativeProps />
       </View>
     </StyleProvider>
   }
 
   Renderer.create(<Root />)
 
-  expect(ref1['setNativeProps']).toBeInstanceOf(Function)
+  expect(ref1.setNativeProps).toBeInstanceOf(Function)
   ref1.setNativeProps({abc: 1})
   expect(cnt).toBe(1)
   expect(lastNativeProps).toEqual({abc: 1})
 
-  expect(ref2['setNativeProps']).not.toBeInstanceOf(Function)
+  expect(ref2.setNativeProps).not.toBeInstanceOf(Function)
 })
 
 test('variants', function () {

@@ -69,14 +69,27 @@ export default function stylable (name) {
       }
     }
 
+    function stylablePureRender () {
+      return React.createElement(WrappedComponent, this.state.childProps)
+    }
+
+    function stylableWillMount () {
+      // HUCK: no public api for this
+      if (this._reactInternalInstance && !this._reactInternalInstance.ref) {
+        // we don't need ref handling
+        this.render = stylablePureRender
+      }
+    }
+
+    function stylableRender () {
+      return React.createElement(WrappedComponent, { ...this.state.childProps, ref: this._setWrappedRef })
+    }
+
     if (pureComponent) {
-      Stylable.prototype.render = function render () {
-        return React.createElement(WrappedComponent, this.state.childProps)
-      }
+      Stylable.prototype.render = stylablePureRender
     } else {
-      Stylable.prototype.render = function render () {
-        return React.createElement(WrappedComponent, { ...this.state.childProps, ref: this._setWrappedRef })
-      }
+      Stylable.prototype.componentWillMount = stylableWillMount
+      Stylable.prototype.render = stylableRender
     }
 
     const proto = WrappedComponent.prototype
