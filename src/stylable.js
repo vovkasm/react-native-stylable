@@ -3,6 +3,7 @@ import React from 'react'
 import hoistStatics from 'hoist-non-react-statics'
 
 import Node from './node'
+import isPureComponent from './isPureComponent'
 
 function getDisplayName (comp) {
   if (typeof comp.getName === 'function') {
@@ -17,11 +18,6 @@ function getDisplayName (comp) {
     }
   }
   return 'Component'
-}
-
-function isPureComponent (comp) {
-  const p = comp.prototype
-  return p.isPureReactComponent || !p.setState
 }
 
 export default function stylable (name) {
