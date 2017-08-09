@@ -4,21 +4,7 @@ import hoistStatics from 'hoist-non-react-statics'
 
 import Node from './node'
 import isPureComponent from './isPureComponent'
-
-function getDisplayName (comp) {
-  if (typeof comp.getName === 'function') {
-    return comp.getName()
-  }
-  if (typeof comp.tag === 'number') {
-    if (typeof comp.type === 'string') {
-      return comp.type
-    }
-    if (typeof comp.type === 'function') {
-      return comp.displayName || comp.name
-    }
-  }
-  return 'Component'
-}
+import getDisplayName from './getDisplayName'
 
 export default function stylable (name) {
   return function wrapWithComponent (WrappedComponent) {
