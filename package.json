@@ -50,7 +50,7 @@
     "standard-version": "^4.2.0"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^2.2.1",
+    "hoist-non-react-statics": "^2.2.2",
     "prop-types": "^15.5.4"
   }
 }
