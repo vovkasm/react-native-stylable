@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/vovkasm/react-native-stylable/compare/v0.1.0...v0.2.0) (2017-08-09)
+
+
+### Bug Fixes
+
+* fix getting proper name of component ([f037042](https://github.com/vovkasm/react-native-stylable/commit/f037042))
+
+
+### Features
+
+* package only needed files ([a9e55a1](https://github.com/vovkasm/react-native-stylable/commit/a9e55a1))
+* Use better naming for components ([8b063b3](https://github.com/vovkasm/react-native-stylable/commit/8b063b3))
+
+
+
 <a name="0.1.0"></a>
 # [0.1.0](https://github.com/vovkasm/react-native-stylable/compare/0.0.5...v0.1.0) (2017-06-24)
 
