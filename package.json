@@ -4,6 +4,10 @@
   "description": "Cascading styles for ReactNative",
   "module": "src/index.js",
   "main": "dist/index.js",
+  "files": [
+      "dist/",
+      "src/"
+  ],
   "scripts": {
     "bench": "node bench/index.js",
     "build": "babel -d dist src",
