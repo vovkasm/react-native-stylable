@@ -6,12 +6,13 @@ import Node from './node'
 import isPureComponent from './isPureComponent'
 import getDisplayName from './getDisplayName'
 
-export default function stylable (name) {
+export default function stylable (selName) {
   return function wrapWithComponent (WrappedComponent) {
-    const stylableDisplayName = `Stylable(${getDisplayName(WrappedComponent)})`
+    const stylableDisplayName = `Stylable(${selName})(${getDisplayName(WrappedComponent)})`
     const pureComponent = isPureComponent(WrappedComponent)
 
     class Stylable extends React.Component {
+      static name = selName
       static displayName = stylableDisplayName
       static WrappedComponent = WrappedComponent
       static contextTypes = {
@@ -27,7 +28,7 @@ export default function stylable (name) {
 
       constructor (props, ctx) {
         super(props, ctx)
-        this.node = new Node(name, props, ctx.styleNode, ctx.styleSheet)
+        this.node = new Node(selName, props, ctx.styleNode, ctx.styleSheet)
         this.state = { childProps: this.node.getChildProps() }
         this._wrapped = undefined
       }
