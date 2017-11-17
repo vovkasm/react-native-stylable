@@ -114,12 +114,12 @@ test('Style property', function () {
     'Text': {style: {fontSize: 8, color: 'black'}},
     'App Text': {style: {fontSize: 10}}
   })
-  expect(s.getProps(nodeFromPath(s, 'App Other Text')), {
+  expect(s.getProps(nodeFromPath(s, 'App Other Text'))).toEqual({
     style: {
       fontSize: 10,
       color: 'black'
     }
-  }, 'get correct fontSize')
+  })
   expect(s.getProps(nodeFromPath(s, 'App Other Text', {style: {color: 'green'}}))).toEqual({
     style: [{ fontSize: 10, color: 'black' }, { color: 'green' }]
   })

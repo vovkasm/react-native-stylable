@@ -34,11 +34,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-eslint": "^7.0.0",
-    "babel-preset-react-native": "^2.1.0",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.0",
+    "babel-preset-react-native": "^4.0.0",
     "benchmark": "^2.1.2",
-    "eslint": "^4.4.1",
+    "eslint": "^4.11.0",
     "eslint-config-standard": "^10.2.0",
     "eslint-config-standard-react": "^5.0.0",
     "eslint-plugin-classes": "^0.1.1",
@@ -47,14 +47,14 @@
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-react": "^7.1.0",
     "eslint-plugin-standard": "^3.0.1",
-    "jest": "^20.0.4",
-    "react": "16.0.0-alpha.12",
-    "react-native": "0.47.1",
-    "react-test-renderer": "16.0.0-alpha.12",
+    "jest": "^21.2.1",
+    "react": "16.0.0",
+    "react-native": "0.50.3",
+    "react-test-renderer": "16.0.0",
     "standard-version": "^4.2.0"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^2.2.2",
-    "prop-types": "^15.5.4"
+    "hoist-non-react-statics": "^2.3.1",
+    "prop-types": "^15.6.0"
   }
 }
