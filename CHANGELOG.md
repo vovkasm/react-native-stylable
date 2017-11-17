@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/vovkasm/react-native-stylable/compare/v0.2.0...v0.2.1) (2017-11-17)
+
+
+### Bug Fixes
+
+* Allow to wrap host components in stylable ([f89fc5e](https://github.com/vovkasm/react-native-stylable/commit/f89fc5e))
+* Remove hack that no more work with React 16+ ([89528e0](https://github.com/vovkasm/react-native-stylable/commit/89528e0))
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/vovkasm/react-native-stylable/compare/v0.1.0...v0.2.0) (2017-08-09)
 
