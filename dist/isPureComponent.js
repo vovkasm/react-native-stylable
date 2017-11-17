@@ -1,1 +1,1 @@
-Object.defineProperty(exports,"__esModule",{value:true});function isPureComponent(comp){var p=comp.prototype;return p.isPureReactComponent||!p.setState;}exports.default=isPureComponent;
+Object.defineProperty(exports,"__esModule",{value:true});function isPureComponent(comp){if(typeof comp==='string'){return false;}var p=comp.prototype;return p.isPureReactComponent||!p.setState;}exports.default=isPureComponent;
