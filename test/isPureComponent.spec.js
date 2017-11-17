@@ -28,3 +28,6 @@ test('Subclass of React.Component - not pure', function () {
   }
   expect(isPureComponent(Comp)).toBeFalsy()
 })
+test('Host component - not pure', function () {
+  expect(isPureComponent('div')).toBeFalsy()
+})

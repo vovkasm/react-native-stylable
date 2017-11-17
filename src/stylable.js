@@ -10,6 +10,7 @@ export default function stylable (selName) {
   return function wrapWithComponent (WrappedComponent) {
     const stylableDisplayName = `Stylable(${selName})(${getDisplayName(WrappedComponent)})`
     const pureComponent = isPureComponent(WrappedComponent)
+    const isHostComponent = typeof WrappedComponent === 'string'
 
     const Stylable = class extends React.Component {
       static name = selName
@@ -70,8 +71,7 @@ export default function stylable (selName) {
       Stylable.prototype.render = stylableRender
     }
 
-    const proto = WrappedComponent.prototype
-    if (typeof proto.setNativeProps === 'function') {
+    if (isHostComponent || typeof WrappedComponent.prototype.setNativeProps === 'function') {
       Stylable.prototype.setNativeProps = function (props) {
         this._wrapped && this._wrapped.setNativeProps(props)
       }

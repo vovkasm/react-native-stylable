@@ -36,3 +36,6 @@ test('Subclass of React.Component', function () {
 test('RN View', function () {
   expect(getDisplayName(View)).toEqual('View')
 })
+test('Host component (RCTView for ex)', function () {
+  expect(getDisplayName('RCTView')).toEqual('RCTView')
+})

@@ -91,6 +91,28 @@ test('setNativeProps', function () {
   expect(ref2.setNativeProps).not.toBeInstanceOf(Function)
 })
 
+test('host component with setNativeProps etc...', () => {
+  const s = new Stylesheet()
+  const StylableView = stylable('View')('RCTView')
+  const elements = <StyleProvider styleSheet={s}>
+    <StylableView />
+  </StyleProvider>
+
+  const setNativePropsMock = jest.fn()
+  const renderer = Renderer.create(elements, {
+    createNodeMock (element) {
+      if (element.type === 'RCTView') {
+        return { setNativeProps: setNativePropsMock }
+      }
+      return null
+    }
+  })
+  const testElement = renderer.root.findByType(StylableView)
+  expect(testElement).toBeDefined()
+  testElement.instance.setNativeProps({abc: 10})
+  expect(setNativePropsMock).toBeCalledWith({abc: 10})
+})
+
 test('variants', function () {
   const s = new Stylesheet()
   s.addDefaultRules({
