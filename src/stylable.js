@@ -11,7 +11,7 @@ export default function stylable (selName) {
     const stylableDisplayName = `Stylable(${selName})(${getDisplayName(WrappedComponent)})`
     const pureComponent = isPureComponent(WrappedComponent)
 
-    class Stylable extends React.Component {
+    const Stylable = class extends React.Component {
       static name = selName
       static displayName = stylableDisplayName
       static WrappedComponent = WrappedComponent
@@ -60,14 +60,6 @@ export default function stylable (selName) {
       return React.createElement(WrappedComponent, this.state.childProps)
     }
 
-    function stylableWillMount () {
-      // HUCK: no public api for this
-      if (this._reactInternalInstance && !this._reactInternalInstance.ref) {
-        // we don't need ref handling
-        this.render = stylablePureRender
-      }
-    }
-
     function stylableRender () {
       return React.createElement(WrappedComponent, { ...this.state.childProps, ref: this._setWrappedRef })
     }
@@ -75,7 +67,6 @@ export default function stylable (selName) {
     if (pureComponent) {
       Stylable.prototype.render = stylablePureRender
     } else {
-      Stylable.prototype.componentWillMount = stylableWillMount
       Stylable.prototype.render = stylableRender
     }
 
