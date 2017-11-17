@@ -62,14 +62,10 @@ test('setNativeProps', function () {
   let cnt = 0
   let lastNativeProps
   class NoNativePropsComp extends React.Component {
-    render () {
-      return <View />
-    }
+    render () { return <View /> }
   }
   class ViewWithNativePropsComp extends React.Component {
-    render () {
-      return <View />
-    }
+    render () { return <View /> }
     setNativeProps (props) {
       cnt++
       lastNativeProps = props
@@ -77,17 +73,15 @@ test('setNativeProps', function () {
   }
   const ViewWithNativeProps = stylable('ViewWithNativeProps')(ViewWithNativePropsComp)
   const NoNativeProps = stylable('NoNativeProps')(NoNativePropsComp)
-  const Root = function Root (props) {
-    return <StyleProvider styleSheet={s}>
-      <View>
-        <ViewWithNativeProps ref={el => { ref1 = el }} />
-        <NoNativeProps ref={el => { ref2 = el }} />
-        <ViewWithNativeProps />
-      </View>
-    </StyleProvider>
-  }
+  const elements = <StyleProvider styleSheet={s}>
+    <View>
+      <ViewWithNativeProps ref={el => { ref1 = el }} />
+      <NoNativeProps ref={el => { ref2 = el }} />
+      <ViewWithNativeProps />
+    </View>
+  </StyleProvider>
 
-  Renderer.create(<Root />)
+  Renderer.create(elements)
 
   expect(ref1.setNativeProps).toBeInstanceOf(Function)
   ref1.setNativeProps({abc: 1})
